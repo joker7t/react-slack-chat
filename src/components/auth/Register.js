@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react';
 import { Link } from "react-router-dom";
 import { LOGIN_PATH } from "../../utils/Constant";
+import firebase from "../../firebase";
 
 class Register extends Component {
     constructor() {
@@ -21,6 +22,11 @@ class Register extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
+        firebase
+            .auth()
+            .createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then(createdUser => console.log(createdUser))
+            .catch(e => console.log(e));
     };
 
     render() {
@@ -35,7 +41,7 @@ class Register extends Component {
                         <Segment stacked>
                             <Form.Input fluid name="username" icon="user" iconPosition="left" placeholder="username"
                                 onChange={this.onChange} type="text" value={this.state.username} />
-                            <Form.Input fluid name="email" icon="email" iconPosition="left" placeholder="email address"
+                            <Form.Input fluid name="email" icon="mail" iconPosition="left" placeholder="email address"
                                 onChange={this.onChange} type="text" value={this.state.email} />
                             <Form.Input fluid name="password" icon="lock" iconPosition="left" placeholder="password"
                                 onChange={this.onChange} type="password" value={this.state.password} />
