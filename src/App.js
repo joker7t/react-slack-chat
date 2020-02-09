@@ -5,6 +5,7 @@ import { HOME_PATH, LOGIN_PATH, REGISTER_PATH } from './utils/Constant';
 import Landing from './components/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import 'semantic-ui-css/semantic.min.css';
 
 function App() {
 
