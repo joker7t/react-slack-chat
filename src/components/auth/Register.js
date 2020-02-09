@@ -12,7 +12,8 @@ class Register extends Component {
             'username': '',
             'email': '',
             'password': '',
-            'confirmedPassword': ''
+            'confirmedPassword': '',
+            'errorMessage': ''
         };
     }
 
@@ -20,14 +21,52 @@ class Register extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
+    isFormEmpty = ({ username, email, password, confirmedPassword }) => {
+        return username === '' || email === '' || password === '' || confirmedPassword === '';
+    }
+
+    isPasswordInValid = ({ password, confirmedPassword }) => {
+        if (password.length < 6 || confirmedPassword.length < 6) {
+            return true;
+        } else if (password !== confirmedPassword) {
+            return true
+        }
+        return false;
+    }
+
+    isFormValid = () => {
+        if (this.isFormEmpty(this.state)) {
+            this.setState({ 'errorMessage': "Please fullfill all fields" });
+            return false;
+        } else if (this.isPasswordInValid(this.state)) {
+            this.setState({ 'errorMessage': "Password is invalid or not match with password confirmation" });
+            return false;
+        } else {
+            this.setState({ 'errorMessage': "" });
+            return true;
+        }
+    }
+
     onSubmit = (e) => {
-        e.preventDefault();
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then(createdUser => console.log(createdUser))
-            .catch(e => console.log(e));
+        if (this.isFormValid()) {
+            e.preventDefault();
+            firebase
+                .auth()
+                .createUserWithEmailAndPassword(this.state.email, this.state.password)
+                .then(createdUser => console.log(createdUser))
+                .catch(e => console.log(e));
+        }
     };
+
+    isShownErrorMessage = () => {
+        const { errorMessage } = this.state;
+        if (errorMessage.length > 0) {
+            return <Message error>
+                <h3>Error</h3>
+                <p>{errorMessage}</p>
+            </Message>;
+        }
+    }
 
     render() {
         return (
@@ -50,7 +89,7 @@ class Register extends Component {
                             <Button className="ui button" type="submit">Submit</Button>
                         </Segment>
                     </Form>
-
+                    {this.isShownErrorMessage()}
                     <Message>
                         Already a user? <Link to={LOGIN_PATH}>Login</Link>
                     </Message>
