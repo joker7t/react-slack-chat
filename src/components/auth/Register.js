@@ -3,6 +3,7 @@ import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-
 import { Link } from "react-router-dom";
 import { LOGIN_PATH } from "../../utils/Constant";
 import firebase from "../../firebase";
+import md5 from 'md5';
 
 class Register extends Component {
     constructor() {
@@ -74,7 +75,12 @@ class Register extends Component {
         }
     }
 
-
+    saveUser = (createdUser) => {
+        return firebase.database().ref('users').child(createdUser.user.uid).set({
+            name: createdUser.user.displayName,
+            avatar: createdUser.user.photoURL
+        });
+    }
 
     onSubmit = (e) => {
         e.preventDefault();
@@ -84,8 +90,16 @@ class Register extends Component {
                 .auth()
                 .createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then(createdUser => {
-                    this.setState({ isLoading: false });
+                    createdUser.user.updateProfile({
+                        displayName: this.state.username,
+                        photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+                    })
+                        .then(() => {
+                            this.saveUser(createdUser).then(() => console.log('user saved'))
+                        })
                     console.log(createdUser);
+
+                    this.setState({ isLoading: false });
                 })
                 .catch(e => {
                     this.setState({
