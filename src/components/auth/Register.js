@@ -13,7 +13,11 @@ class Register extends Component {
             'email': '',
             'password': '',
             'confirmedPassword': '',
-            'errorMessage': ''
+            'errorMessage': {
+                'code': '',
+                'message': ''
+            },
+            'isLoading': false
         };
     }
 
@@ -36,34 +40,74 @@ class Register extends Component {
 
     isFormValid = () => {
         if (this.isFormEmpty(this.state)) {
-            this.setState({ 'errorMessage': "Please fullfill all fields" });
+            this.setState({
+                errorMessage: {
+                    'code': 'error',
+                    'message': "Please fullfill all fields"
+                }
+            });
             return false;
         } else if (this.isPasswordInValid(this.state)) {
-            this.setState({ 'errorMessage': "Password is invalid or not match with password confirmation" });
+            this.setState({
+                errorMessage: {
+                    'code': 'password',
+                    'message': "Password is invalid or not match with password confirmation"
+                }
+            });
             return false;
         } else {
-            this.setState({ 'errorMessage': "" });
+            this.setState({
+                errorMessage: {
+                    'code': '',
+                    'message': ''
+                }
+            });
             return true;
         }
     }
 
+    isInputFieldHasError = (inputFieldName) => {
+        if (this.state.errorMessage.code === inputFieldName) {
+            return 'error';
+        } else {
+            return '';
+        }
+    }
+
+
+
     onSubmit = (e) => {
+        e.preventDefault();
+        this.setState({ isLoading: true });
         if (this.isFormValid()) {
-            e.preventDefault();
             firebase
                 .auth()
                 .createUserWithEmailAndPassword(this.state.email, this.state.password)
-                .then(createdUser => console.log(createdUser))
-                .catch(e => console.log(e));
+                .then(createdUser => {
+                    this.setState({ isLoading: false });
+                    console.log(createdUser);
+                })
+                .catch(e => {
+                    this.setState({
+                        errorMessage: {
+                            'code': 'email',
+                            'message': "Email is already in use"
+                        },
+                        isLoading: false
+                    });
+                    console.log(e);
+                });
+        } else {
+            this.setState({ isLoading: false });
         }
     };
 
     isShownErrorMessage = () => {
         const { errorMessage } = this.state;
-        if (errorMessage.length > 0) {
+        if (errorMessage.code !== '') {
             return <Message error>
-                <h3>Error</h3>
-                <p>{errorMessage}</p>
+                <h3>{errorMessage.code}</h3>
+                <p>{errorMessage.message}</p>
             </Message>;
         }
     }
@@ -79,14 +123,21 @@ class Register extends Component {
                     <Form size="large" onSubmit={this.onSubmit}>
                         <Segment stacked>
                             <Form.Input fluid name="username" icon="user" iconPosition="left" placeholder="username"
+                                className={this.isInputFieldHasError('username')}
                                 onChange={this.onChange} type="text" value={this.state.username} />
                             <Form.Input fluid name="email" icon="mail" iconPosition="left" placeholder="email address"
+                                className={this.isInputFieldHasError('email')}
                                 onChange={this.onChange} type="text" value={this.state.email} />
                             <Form.Input fluid name="password" icon="lock" iconPosition="left" placeholder="password"
+                                className={this.isInputFieldHasError('password')}
                                 onChange={this.onChange} type="password" value={this.state.password} />
                             <Form.Input fluid name="confirmedPassword" icon="repeat" iconPosition="left" placeholder="password confirmation"
+                                className={this.isInputFieldHasError('password')}
                                 onChange={this.onChange} type="password" value={this.state.confirmedPassword} />
-                            <Button className="ui button" type="submit">Submit</Button>
+
+                            <Button disabled={this.state.isLoading}
+                                className={this.state.isLoading ? "loading" : "ui button"}
+                                type="submit">Submit</Button>
                         </Segment>
                     </Form>
                     {this.isShownErrorMessage()}
