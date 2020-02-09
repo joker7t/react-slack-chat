@@ -120,7 +120,6 @@ class Register extends Component {
         const { errorMessage } = this.state;
         if (errorMessage.code !== '') {
             return <Message error>
-                <h3>{errorMessage.code}</h3>
                 <p>{errorMessage.message}</p>
             </Message>;
         }
@@ -130,7 +129,7 @@ class Register extends Component {
         return (
             <Grid textAlign="center" verticalAlign="middle" className="app">
                 <Grid.Column className="max-width-grid-column">
-                    <Header as="h2" icon color="orange" textAlign="center">
+                    <Header as="h1" icon color="orange" textAlign="center">
                         <Icon name="puzzle piece" color="orange" />
                         Register for chat
                     </Header>
@@ -151,6 +150,8 @@ class Register extends Component {
 
                             <Button disabled={this.state.isLoading}
                                 className={this.state.isLoading ? "loading" : "ui button"}
+                                color="orange"
+                                fluid
                                 type="submit">Submit</Button>
                         </Segment>
                     </Form>
