@@ -7,3 +7,7 @@ html, body, .app {
 .max-width-grid-column{
     max-width: 450px;
 }
+
+.margin-top-minus-20{
+    margin-top: -20px;
+}
