@@ -8,6 +8,8 @@ import Register from './components/auth/Register';
 import 'semantic-ui-css/semantic.min.css';
 import firebase from './firebase';
 import createHistory from './history';
+import store from './store';
+import { Provider } from 'react-redux';
 
 class App extends Component {
   componentDidMount() {
@@ -23,15 +25,15 @@ class App extends Component {
   render() {
 
     return (
-      // <Provider store={store}>
-      <Router>
-        <div className="App">
-          <Route exact path={HOME_PATH} component={Landing} />
-          <Route exact path={LOGIN_PATH} component={Login} />
-          <Route exact path={REGISTER_PATH} component={Register} />
-        </div>
-      </Router>
-      // </Provider>
+      <Provider store={store}>
+        <Router>
+          <div className="App">
+            <Route exact path={HOME_PATH} component={Landing} />
+            <Route exact path={LOGIN_PATH} component={Login} />
+            <Route exact path={REGISTER_PATH} component={Register} />
+          </div>
+        </Router>
+      </Provider>
     );
 
   }
