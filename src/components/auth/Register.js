@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react';
 import { Link } from "react-router-dom";
-import { LOGIN_PATH } from "../../utils/Constant";
+import { LOGIN_PATH, HOME_PATH } from "../../utils/Constant";
 import firebase from "../../firebase";
 import md5 from 'md5';
+import _ from "lodash";
 
 class Register extends Component {
     constructor() {
@@ -105,7 +106,7 @@ class Register extends Component {
                     this.setState({
                         errorMessage: {
                             'code': 'email',
-                            'message': "Email is already in use"
+                            'message': e.message
                         },
                         isLoading: false
                     });
@@ -122,6 +123,18 @@ class Register extends Component {
             return <Message error>
                 <p>{errorMessage.message}</p>
             </Message>;
+        }
+    }
+
+    componentDidMount() {
+        if (!_.isEmpty(this.props.users.user)) {
+            this.props.history.push(HOME_PATH);
+        }
+    }
+
+    componentDidUpdate() {
+        if (!_.isEmpty(this.props.users.user)) {
+            this.props.history.push(LOGIN_PATH);
         }
     }
 

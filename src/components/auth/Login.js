@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react';
 import { Link } from "react-router-dom";
-import { REGISTER_PATH } from "../../utils/Constant";
+import { REGISTER_PATH, HOME_PATH } from "../../utils/Constant";
 import firebase from "../../firebase";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { signIn } from "../../actions/userAction";
+import _ from 'lodash';
 
 class Login extends Component {
     constructor() {
@@ -11,10 +15,7 @@ class Login extends Component {
         this.state = {
             'email': '',
             'password': '',
-            'errorMessage': {
-                'code': '',
-                'message': ''
-            },
+            'errorMessage': {},
             'isLoading': false
         };
     }
@@ -50,18 +51,16 @@ class Login extends Component {
             return false;
         } else {
             this.setState({
-                errorMessage: {
-                    'code': '',
-                    'message': ''
-                }
+                errorMessage: {}
             });
             return true;
         }
     }
 
     isInputFieldHasError = (inputFieldName) => {
-        if (this.state.errorMessage.code === inputFieldName ||
-            this.state.errorMessage.code === 'error') {
+        const { errorMessage } = this.state;
+        if (!_.isEmpty(errorMessage) &&
+            (errorMessage.code === inputFieldName || errorMessage.code === 'error')) {
             return 'error';
         } else {
             return '';
@@ -78,6 +77,7 @@ class Login extends Component {
                 .then(signedInUser => {
                     console.log(signedInUser);
                     this.setState({ isLoading: false });
+                    this.props.signIn(signedInUser);
                 })
                 .catch(e => {
                     console.log(e);
@@ -96,10 +96,22 @@ class Login extends Component {
 
     isShownErrorMessage = () => {
         const { errorMessage } = this.state;
-        if (errorMessage.code !== '') {
+        if (!_.isEmpty(errorMessage)) {
             return <Message error>
                 <p>{errorMessage.message}</p>
             </Message>;
+        }
+    }
+
+    componentDidMount() {
+        if (!_.isEmpty(this.props.users.user)) {
+            this.props.history.push(HOME_PATH);
+        }
+    }
+
+    componentDidUpdate() {
+        if (!_.isEmpty(this.props.users.user)) {
+            this.props.history.push(HOME_PATH);
         }
     }
 
@@ -137,4 +149,12 @@ class Login extends Component {
     }
 }
 
-export default Login;
+Login.propTypes = {
+    signIn: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state) => ({
+    users: state.users
+});
+
+export default connect(mapStateToProps, { signIn })(Login);
