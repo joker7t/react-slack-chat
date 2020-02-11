@@ -1,16 +1,14 @@
-import { LOGIN } from "./type";
+import { SET_USER } from "./type";
 
 const initialState = {
-    user: {}
+    user: {},
+    isLoading: true
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case LOGIN:
-            return {
-                ...state,
-                user: action.payload
-            };
+        case SET_USER:
+            return action.payload;
         default:
             return state;
     }

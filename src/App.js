@@ -6,24 +6,23 @@ import Landing from './components/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import 'semantic-ui-css/semantic.min.css';
-import firebase from './firebase';
-import createHistory from './history';
 import store from './store';
 import { Provider } from 'react-redux';
+import { SET_USER } from "./reducers/type";
+
+const user = localStorage.user;
+if (user) {
+  store.dispatch({
+    type: SET_USER,
+    payload: {
+      user: user,
+      isLoading: false
+    }
+  });
+}
 
 class App extends Component {
-  componentDidMount() {
-    firebase
-      .auth()
-      .onAuthStateChanged(user => {
-        if (user) {
-          createHistory.push(HOME_PATH);
-        }
-      })
-  }
-
   render() {
-
     return (
       <Provider store={store}>
         <Router>
