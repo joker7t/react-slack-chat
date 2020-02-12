@@ -9,6 +9,7 @@ import 'semantic-ui-css/semantic.min.css';
 import store from './store';
 import { Provider } from 'react-redux';
 import { SET_USER } from "./reducers/type";
+import Spinner from "./components/Spinner";
 
 const user = localStorage.user;
 if (user) {
@@ -23,7 +24,7 @@ if (user) {
 
 class App extends Component {
   render() {
-    return (
+    return store.getState().users.isLoading ? <Spinner /> : (
       <Provider store={store}>
         <Router>
           <div className="App">
