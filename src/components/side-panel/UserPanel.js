@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, GridColumn, Header, Icon, Dropdown } from "semantic-ui-react";
+import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -25,12 +25,12 @@ class UserPanel extends Component {
     }
 
     render() {
-        const username = this.props.users.user.displayName;
+        const { user } = this.props.users;
 
         const dropDownOptions = [
             {
                 key: 'user',
-                text: <span>Signed in as <strong>{username}</strong></span>,
+                text: <span>Signed in as <strong>{user.displayName}</strong></span>,
                 disabled: true
             },
             {
@@ -45,19 +45,27 @@ class UserPanel extends Component {
 
         return (
             <Grid style={{ background: "#4c3c4c" }}>
-                <GridColumn>
+                {
+                    // colunm contains row because of parent element in vertical order
+                }
+                <Grid.Column>
                     <Grid.Row style={{ padding: "1.2rem", margin: 0 }}>
                         <Header inverted floated="left" as="h2">
                             <Icon name="code" />
                             <Header.Content>Toan's chat</Header.Content>
                         </Header>
-                    </Grid.Row>
 
-                    <Header style={{ padding: ".25rem" }} as="h4" inverted>
-                        <Dropdown trigger={<span>{username}</span>} options={dropDownOptions} />
-                    </Header>
-                </GridColumn>
-            </Grid>
+                        <Header style={{ padding: ".25rem" }} as="h4" inverted>
+                            <Dropdown trigger={
+                                <span>
+                                    <Image src={user.photoURL} spaced="right" avatar />
+                                    {user.displayName}
+                                </span>}
+                                options={dropDownOptions} />
+                        </Header>
+                    </Grid.Row>
+                </Grid.Column>
+            </Grid >
         );
     }
 }
