@@ -6,6 +6,14 @@ import PropTypes from "prop-types";
 import { signOut } from "../../actions/userAction";
 
 class UserPanel extends Component {
+    // constructor(){
+    //     super();
+
+    //     this.state = {
+    //         username: ''
+    //     }
+    // }
+
     onSignOut = () => {
         firebase
             .auth()
@@ -17,10 +25,12 @@ class UserPanel extends Component {
     }
 
     render() {
+        const username = this.props.users.user.displayName;
+
         const dropDownOptions = [
             {
                 key: 'user',
-                text: <span>Signed in as <strong>User</strong></span>,
+                text: <span>Signed in as <strong>{username}</strong></span>,
                 disabled: true
             },
             {
@@ -44,7 +54,7 @@ class UserPanel extends Component {
                     </Grid.Row>
 
                     <Header style={{ padding: ".25rem" }} as="h4" inverted>
-                        <Dropdown trigger={<span>User</span>} options={dropDownOptions} />
+                        <Dropdown trigger={<span>{username}</span>} options={dropDownOptions} />
                     </Header>
                 </GridColumn>
             </Grid>

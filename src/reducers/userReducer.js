@@ -1,4 +1,4 @@
-import { SET_USER, CLEAR_USER } from "./type";
+import { SET_USER, CLEAR_USER, CREATE_USER } from "./type";
 
 const initialState = {
     user: {},
@@ -10,6 +10,8 @@ export default function (state = initialState, action) {
         case SET_USER:
             return action.payload;
         case CLEAR_USER:
+            return action.payload;
+        case CREATE_USER:
             return action.payload;
         default:
             return state;

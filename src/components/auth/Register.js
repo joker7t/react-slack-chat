@@ -5,6 +5,9 @@ import { LOGIN_PATH, HOME_PATH } from "../../utils/Constant";
 import firebase from "../../firebase";
 import md5 from 'md5';
 import _ from "lodash";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { createUser, signOut } from "../../actions/userAction";
 
 class Register extends Component {
     constructor() {
@@ -98,6 +101,11 @@ class Register extends Component {
                         .then(() => {
                             this.saveUser(createdUser).then(() => console.log('user saved'))
                         })
+                        .then(() => {
+                            firebase.auth().signOut()
+                            this.props.signOut();
+                            this.props.history.push(LOGIN_PATH);
+                        })
                     console.log(createdUser);
 
                     this.setState({ isLoading: false });
@@ -127,16 +135,16 @@ class Register extends Component {
     }
 
     componentDidMount() {
-        if (!_.isEmpty(this.props.users.user)) {
+        if (!_.isEmpty(this.props.users)) {
             this.props.history.push(HOME_PATH);
         }
     }
 
-    componentDidUpdate() {
-        if (!_.isEmpty(this.props.users.user)) {
-            this.props.history.push(LOGIN_PATH);
-        }
-    }
+    // componentDidUpdate() {
+    //     if (!_.isEmpty(this.props.users)) {
+    //         this.props.history.push(LOGIN_PATH);
+    //     }
+    // }
 
     render() {
         return (
@@ -178,4 +186,9 @@ class Register extends Component {
     }
 }
 
-export default Register;
+Register.propTypes = {
+    createUser: PropTypes.func.isRequired,
+    signOut: PropTypes.func.isRequired
+};
+
+export default connect(null, { createUser, signOut })(Register);
