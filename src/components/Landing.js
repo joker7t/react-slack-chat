@@ -4,8 +4,23 @@ import ColorPanel from './color-panel/ColorPanel';
 import SidePanel from './side-panel/SidePanel';
 import Messages from './messages/Messages';
 import MetaPanel from './meta-panel/MetaPanel';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import _ from 'lodash';
 
 class Landing extends Component {
+    componentDidMount() {
+        if (_.isEmpty(this.props.user)) {
+            this.props.history.push("/login");
+        }
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (_.isEmpty(newProps.user)) {
+            this.props.history.push("/login");
+        }
+    }
+
     render() {
         return (
             <Grid columns="equal" className="app main-background">
@@ -27,4 +42,12 @@ class Landing extends Component {
     }
 }
 
-export default Landing;
+Landing.propTypes = {
+    user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    user: state.users.user
+});
+
+export default connect(mapStateToProps, null)(Landing);

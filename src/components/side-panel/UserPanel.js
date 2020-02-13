@@ -1,14 +1,37 @@
 import React, { Component } from 'react';
 import { Grid, GridColumn, Header, Icon, Dropdown } from "semantic-ui-react";
+import firebase from "../../firebase";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { signOut } from "../../actions/userAction";
 
 class UserPanel extends Component {
+    // constructor(){
+    //     super();
+
+    //     this.state = {
+    //         username: ''
+    //     }
+    // }
+
+    onSignOut = () => {
+        firebase
+            .auth()
+            .signOut()
+            .then(() => {
+                console.log("signed out");
+                this.props.signOut();
+            });
+    }
 
     render() {
+        const username = this.props.users.user.displayName;
+
         const dropDownOptions = [
             {
                 key: 'user',
-                text: <span>Signed in as <strong>User</strong></span>,
-                disable: true
+                text: <span>Signed in as <strong>{username}</strong></span>,
+                disabled: true
             },
             {
                 key: 'avatar',
@@ -16,7 +39,7 @@ class UserPanel extends Component {
             },
             {
                 key: 'signout',
-                text: <span>Sign out</span>
+                text: <span onClick={() => this.onSignOut()}>Sign out</span>
             }
         ];
 
@@ -31,7 +54,7 @@ class UserPanel extends Component {
                     </Grid.Row>
 
                     <Header style={{ padding: ".25rem" }} as="h4" inverted>
-                        <Dropdown trigger={<span>User</span>} options={dropDownOptions} />
+                        <Dropdown trigger={<span>{username}</span>} options={dropDownOptions} />
                     </Header>
                 </GridColumn>
             </Grid>
@@ -39,4 +62,13 @@ class UserPanel extends Component {
     }
 }
 
-export default UserPanel;
+UserPanel.propTypes = {
+    signOut: PropTypes.func.isRequired,
+    users: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    users: state.users
+});
+
+export default connect(mapStateToProps, { signOut })(UserPanel);

@@ -10,21 +10,31 @@ import store from './store';
 import { Provider } from 'react-redux';
 import { SET_USER } from "./reducers/type";
 import Spinner from "./components/Spinner";
-
-const user = localStorage.user;
-if (user) {
-  store.dispatch({
-    type: SET_USER,
-    payload: {
-      user: user,
-      isLoading: false
-    }
-  });
-}
+import firebase from "./firebase";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      isLoading: true
+    }
+  }
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(signedInUser => {
+      store.dispatch({
+        type: SET_USER,
+        payload: {
+          user: signedInUser,
+          isLoading: false
+        }
+      });
+      this.setState({ isLoading: false });
+    });
+  };
+
   render() {
-    return store.getState().users.isLoading ? <Spinner /> : (
+    return this.state.isLoading ? <Spinner /> : (
       <Provider store={store}>
         <Router>
           <div className="App">
