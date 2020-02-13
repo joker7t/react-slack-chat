@@ -6,10 +6,7 @@ import PropTypes from "prop-types";
 import { signOut } from "../../actions/userAction";
 
 class UserPanel extends Component {
-
-
     onSignOut = () => {
-
         firebase
             .auth()
             .signOut()
@@ -17,7 +14,6 @@ class UserPanel extends Component {
                 console.log("signed out");
                 this.props.signOut();
             });
-
     }
 
     render() {

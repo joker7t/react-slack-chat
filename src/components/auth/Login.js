@@ -24,11 +24,11 @@ class Login extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    isFormEmpty = ({ username, email, password, confirmedPassword }) => {
+    isFormEmpty = ({ email, password }) => {
         return email === '' || password === '';
     }
 
-    isPasswordInValid = ({ password, confirmedPassword }) => {
+    isPasswordInValid = ({ password }) => {
         return password.length < 6;
     }
 
