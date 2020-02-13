@@ -4,6 +4,10 @@ html, body, .app {
     padding: 1em;
 }
 
+.main-background{
+    background: #eee;
+}
+
 .max-width-grid-column{
     max-width: 450px;
 }
