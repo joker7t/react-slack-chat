@@ -6,13 +6,6 @@ import PropTypes from "prop-types";
 import { signOut } from "../../actions/userAction";
 
 class UserPanel extends Component {
-    // constructor(){
-    //     super();
-
-    //     this.state = {
-    //         username: ''
-    //     }
-    // }
 
     onSignOut = () => {
         firebase
