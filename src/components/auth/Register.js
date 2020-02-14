@@ -83,42 +83,37 @@ class Register extends Component {
         });
     }
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
         this.setState({ isLoading: true });
         if (this.isFormValid()) {
-            firebase
-                .auth()
-                .createUserWithEmailAndPassword(this.state.email, this.state.password)
-                .then(createdUser => {
-                    createdUser.user.updateProfile({
-                        displayName: this.state.username,
-                        photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
-                    })
-                        .then(() => {
-                            this.saveUser(createdUser).then(() => console.log('user saved'))
-                        })
-                        .then(() => {
-                            this.props.history.push(LOGIN_PATH);
-                        })
-                    console.log(createdUser);
-
-                    this.setState({ isLoading: false });
-                })
-                .catch(e => {
-                    this.setState({
-                        errorMessage: {
-                            'code': 'email',
-                            'message': e.message
-                        },
-                        isLoading: false
-                    });
-                    console.log(e);
+            try {
+                const createdUser = await firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(this.state.email, this.state.password);
+                await createdUser.user.updateProfile({
+                    displayName: this.state.username,
+                    photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
                 });
-        } else {
-            this.setState({ isLoading: false });
-        }
-    };
+                this.saveUser(createdUser).then(() => console.log('user saved'))
+                this.props.history.push(LOGIN_PATH);
+                console.log(createdUser);
+
+            }
+
+            catch (e) {
+                this.setState({
+                    errorMessage: {
+                        'code': 'email',
+                        'message': e.message
+                    },
+                    isLoading: false
+                });
+                console.log(e);
+            };
+        };
+        this.setState({ isLoading: false });
+    }
 
     isShownErrorMessage = () => {
         const { errorMessage } = this.state;
