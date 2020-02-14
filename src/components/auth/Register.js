@@ -95,7 +95,9 @@ class Register extends Component {
                     displayName: this.state.username,
                     photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
                 });
-                this.saveUser(createdUser).then(() => console.log('user saved'))
+                //no need to wait this method
+                this.saveUser(createdUser);
+
                 this.props.history.push(LOGIN_PATH);
                 console.log(createdUser);
 

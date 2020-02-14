@@ -1,4 +1,4 @@
-import { SET_USER, CLEAR_USER, CREATE_USER } from "../reducers/type";
+import { SET_USER, CLEAR_USER } from "../reducers/type";
 
 export const signIn = (user) => dispatch => {
     dispatch({
@@ -16,16 +16,6 @@ export const signOut = () => dispatch => {
         payload: {
             user: {},
             isLoading: true
-        }
-    });
-};
-
-export const createUser = (user) => dispatch => {
-    dispatch({
-        type: CREATE_USER,
-        payload: {
-            user: user,
-            isLoading: false
         }
     });
 };
