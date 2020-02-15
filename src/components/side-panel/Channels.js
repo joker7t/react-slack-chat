@@ -16,7 +16,8 @@ class Channels extends Component {
             channelName: '',
             channelDetails: '',
             isLoading: false,
-            isInValid: false
+            isInValid: false,
+            isFirstload: true
         };
     }
 
@@ -82,6 +83,8 @@ class Channels extends Component {
         }
     }
 
+    isChannelActive = (channel) => this.props.channels.selectedChannel.id === channel.id;
+
     displayChannels = (channels) => {
         return channels.length > 0 && channels.map(channel => (
             <Menu.Item
@@ -89,6 +92,7 @@ class Channels extends Component {
                 onClick={() => this.onCLickForChannel(channel)}
                 name={channel.name}
                 style={{ opacity: 0.7 }}
+                active={this.isChannelActive(channel)}
             >
                 # {channel.name}
             </Menu.Item>
@@ -99,11 +103,20 @@ class Channels extends Component {
         this.props.setCurrentChannel(channel);
     }
 
+    setDefaultChannel = () => {
+        const { isFirstload, channels } = this.state;
+        if (isFirstload && channels.length > 0) {
+            this.props.setCurrentChannel(channels[0]);
+        }
+        this.setState({ isFirstload: false });
+    }
+
     componentDidMount() {
         let channelsAdded = [];
         firebase.database().ref('channels').on("child_added", channelNode => {
             channelsAdded.push(channelNode.val());
             this.props.getAllChannels(channelsAdded);
+            this.setDefaultChannel();
         });
     }
 

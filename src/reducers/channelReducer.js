@@ -1,7 +1,7 @@
 import { GET_ALL_CHANNELS, SET_CURRENT_CHANNEL } from "./type";
 
 const initialState = {
-    slectedChannel: {},
+    selectedChannel: {},
     channels: []
 };
 
@@ -15,7 +15,7 @@ export default function (state = initialState, action) {
         case SET_CURRENT_CHANNEL:
             return {
                 ...state,
-                slectedChannel: action.payload
+                selectedChannel: action.payload
             };
         default:
             return state;
