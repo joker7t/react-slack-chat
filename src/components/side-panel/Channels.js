@@ -46,7 +46,7 @@ class Channels extends Component {
     saveChannel = async () => {
         this.setState({ isLoading: true });
         const channelRef = firebase.database().ref('channels');
-        const key = channelRef.push();
+        const key = channelRef.push().key;
         const { channelName, channelDetails } = this.state;
         const { displayName, photoURL } = this.props.user;
         const newChannel = {
@@ -58,6 +58,15 @@ class Channels extends Component {
                 avatar: photoURL
             }
         };
+        try {
+            await channelRef.child(key).update(newChannel);
+            this.setState({ channelName: '', channelDetails: '' });
+            this.handleCloseModal();
+            console.log(newChannel);
+        } catch (error) {
+            this.setState({ isInValid: false });
+            console.log(error);
+        }
 
         // .child(createdUser.user.uid).set({
         //     name: createdUser.user.displayName,
@@ -69,7 +78,7 @@ class Channels extends Component {
     isShownErrorMessage = () => {
         if (this.state.isInValid) {
             return <Message error>
-                <p>Please fullfill all the channal data</p>
+                <p>Cannot create channel</p>
             </Message>;
         }
     }
