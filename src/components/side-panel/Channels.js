@@ -5,7 +5,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../Spinner";
-import { geAllChannels, addChannel, setCurrentChannel } from "../../actions/channelAction";
+import { getAllChannels, setCurrentChannel } from "../../actions/channelAction";
 
 class Channels extends Component {
     constructor() {
@@ -61,8 +61,10 @@ class Channels extends Component {
         };
         try {
             await channelRef.child(key).update(newChannel);
-            this.props.addChannel(newChannel);
-            this.setState({ channelName: '', channelDetails: '' });
+            this.setState({
+                channelName: '',
+                channelDetails: ''
+            });
             this.handleCloseModal();
             console.log(newChannel);
         } catch (error) {
@@ -98,16 +100,11 @@ class Channels extends Component {
     }
 
     componentDidMount() {
-        //Need to fix 
-
-
-
         let channelsAdded = [];
         firebase.database().ref('channels').on("child_added", channelNode => {
             channelsAdded.push(channelNode.val());
+            this.props.getAllChannels(channelsAdded);
         });
-        this.props.geAllChannels(channelsAdded);
-
     }
 
     componentWillReceiveProps(newProps) {
@@ -127,7 +124,7 @@ class Channels extends Component {
                         ({channels.length}) <Icon name="add" style={{ cursor: "pointer" }} onClick={this.handleOpenModal} />
                     </Menu.Item>
 
-                    {this.displayChannels(this.props.channels.channels)}
+                    {this.displayChannels(channels)}
                 </Menu.Menu>
 
 
@@ -183,8 +180,7 @@ class Channels extends Component {
 Channels.propTypes = {
     user: PropTypes.object.isRequired,
     channels: PropTypes.object.isRequired,
-    geAllChannels: PropTypes.func.isRequired,
-    addChannel: PropTypes.func.isRequired,
+    getAllChannels: PropTypes.func.isRequired,
     setCurrentChannel: PropTypes.func.isRequired
 };
 
@@ -193,4 +189,4 @@ const mapStateToProps = (state) => ({
     channels: state.channels
 });
 
-export default connect(mapStateToProps, { geAllChannels, addChannel, setCurrentChannel })(Channels);
+export default connect(mapStateToProps, { getAllChannels, setCurrentChannel })(Channels);
