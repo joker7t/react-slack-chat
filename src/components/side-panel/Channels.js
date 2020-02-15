@@ -5,17 +5,20 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../Spinner";
+import { getAllChannels, setCurrentChannel } from "../../actions/channelAction";
 
 class Channels extends Component {
     constructor() {
         super();
         this.state = {
+            channelRef: firebase.database().ref('channels'),
             channels: [],
             modal: false,
             channelName: '',
             channelDetails: '',
             isLoading: false,
-            isInValid: false
+            isInValid: false,
+            isFirstload: true
         };
     }
 
@@ -45,8 +48,7 @@ class Channels extends Component {
 
     saveChannel = async () => {
         this.setState({ isLoading: true });
-        const channelRef = firebase.database().ref('channels');
-        const key = channelRef.push().key;
+        const key = this.state.channelRef.push().key;
         const { channelName, channelDetails } = this.state;
         const { displayName, photoURL } = this.props.user;
         const newChannel = {
@@ -59,8 +61,11 @@ class Channels extends Component {
             }
         };
         try {
-            await channelRef.child(key).update(newChannel);
-            this.setState({ channelName: '', channelDetails: '' });
+            await this.state.channelRef.child(key).update(newChannel);
+            this.setState({
+                channelName: '',
+                channelDetails: ''
+            });
             this.handleCloseModal();
             console.log(newChannel);
         } catch (error) {
@@ -78,6 +83,51 @@ class Channels extends Component {
         }
     }
 
+    isChannelActive = (channel) => this.props.channels.selectedChannel.id === channel.id;
+
+    displayChannels = (channels) => {
+        return channels.length > 0 && channels.map(channel => (
+            <Menu.Item
+                key={channel.id}
+                onClick={() => this.onCLickForChannel(channel)}
+                name={channel.name}
+                style={{ opacity: 0.7 }}
+                active={this.isChannelActive(channel)}
+            >
+                # {channel.name}
+            </Menu.Item>
+        ))
+    }
+
+    onCLickForChannel = (channel) => {
+        this.props.setCurrentChannel(channel);
+    }
+
+    setDefaultChannel = () => {
+        const { isFirstload, channels } = this.state;
+        if (isFirstload && channels.length > 0) {
+            this.props.setCurrentChannel(channels[0]);
+        }
+        this.setState({ isFirstload: false });
+    }
+
+    componentDidMount() {
+        let channelsAdded = [];
+        firebase.database().ref('channels').on("child_added", channelNode => {
+            channelsAdded.push(channelNode.val());
+            this.props.getAllChannels(channelsAdded);
+            this.setDefaultChannel();
+        });
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.setState({ channels: newProps.channels.channels });
+    }
+
+    componentWillUnmount() {
+        this.state.channelRef.off();
+    }
+
     render() {
         const { channels, modal, channelName, channelDetails, isInValid, isLoading } = this.state;
         return (
@@ -90,6 +140,8 @@ class Channels extends Component {
                         {" "}
                         ({channels.length}) <Icon name="add" style={{ cursor: "pointer" }} onClick={this.handleOpenModal} />
                     </Menu.Item>
+
+                    {this.displayChannels(channels)}
                 </Menu.Menu>
 
 
@@ -143,11 +195,15 @@ class Channels extends Component {
 }
 
 Channels.propTypes = {
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    channels: PropTypes.object.isRequired,
+    getAllChannels: PropTypes.func.isRequired,
+    setCurrentChannel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-    user: state.users.user
+    user: state.users.user,
+    channels: state.channels
 });
 
-export default connect(mapStateToProps, null)(Channels);
+export default connect(mapStateToProps, { getAllChannels, setCurrentChannel })(Channels);
