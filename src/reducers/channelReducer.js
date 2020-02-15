@@ -1,4 +1,4 @@
-import { GET_ALL_CHANNELS, ADD_CHANNEL } from "./type";
+import { GET_ALL_CHANNELS, ADD_CHANNEL, SET_CURRENT_CHANNEL } from "./type";
 
 const initialState = {
     slectedChannel: {},
@@ -16,6 +16,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 channels: [...state.channels, action.payload]
+            };
+        case SET_CURRENT_CHANNEL:
+            return {
+                ...state,
+                slectedChannel: action.payload
             };
         default:
             return state;

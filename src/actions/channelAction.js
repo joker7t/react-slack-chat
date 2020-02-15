@@ -1,4 +1,4 @@
-import { GET_ALL_CHANNELS, ADD_CHANNEL } from "../reducers/type";
+import { GET_ALL_CHANNELS, ADD_CHANNEL, SET_CURRENT_CHANNEL } from "../reducers/type";
 
 export const geAllChannels = (channels) => dispatch => {
     dispatch({
@@ -10,6 +10,13 @@ export const geAllChannels = (channels) => dispatch => {
 export const addChannel = (channel) => dispatch => {
     dispatch({
         type: ADD_CHANNEL,
+        payload: channel
+    });
+};
+
+export const setCurrentChannel = (channel) => dispatch => {
+    dispatch({
+        type: SET_CURRENT_CHANNEL,
         payload: channel
     });
 };

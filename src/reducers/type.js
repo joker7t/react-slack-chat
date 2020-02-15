@@ -2,3 +2,4 @@ export const SET_USER = "SET_USER";
 export const CLEAR_USER = "CLEAR_USER";
 export const GET_ALL_CHANNELS = "GET_ALL_CHANNELS";
 export const ADD_CHANNEL = "ADD_CHANNEL";
+export const SET_CURRENT_CHANNEL = "SET_CURRENT_CHANNEL";

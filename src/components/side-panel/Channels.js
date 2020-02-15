@@ -5,7 +5,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../Spinner";
-import { geAllChannels, addChannel } from "../../actions/channelAction";
+import { geAllChannels, addChannel, setCurrentChannel } from "../../actions/channelAction";
 
 class Channels extends Component {
     constructor() {
@@ -84,13 +84,17 @@ class Channels extends Component {
         return channels.length > 0 && channels.map(channel => (
             <Menu.Item
                 key={channel.id}
-                onClick={() => console.log(channel)}
+                onClick={() => this.onCLickForChannel(channel)}
                 name={channel.name}
                 style={{ opacity: 0.7 }}
             >
                 # {channel.name}
             </Menu.Item>
         ))
+    }
+
+    onCLickForChannel = (channel) => {
+        this.props.setCurrentChannel(channel);
     }
 
     componentDidMount() {
@@ -172,7 +176,9 @@ class Channels extends Component {
 Channels.propTypes = {
     user: PropTypes.object.isRequired,
     channels: PropTypes.object.isRequired,
-    geAllChannels: PropTypes.func.isRequired
+    geAllChannels: PropTypes.func.isRequired,
+    addChannel: PropTypes.func.isRequired,
+    setCurrentChannel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -180,4 +186,4 @@ const mapStateToProps = (state) => ({
     channels: state.channels
 });
 
-export default connect(mapStateToProps, { geAllChannels, addChannel })(Channels);
+export default connect(mapStateToProps, { geAllChannels, addChannel, setCurrentChannel })(Channels);
