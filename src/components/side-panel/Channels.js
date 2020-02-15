@@ -67,11 +67,6 @@ class Channels extends Component {
             this.setState({ isInValid: false });
             console.log(error);
         }
-
-        // .child(createdUser.user.uid).set({
-        //     name: createdUser.user.displayName,
-        //     avatar: createdUser.user.photoURL
-        // });
         this.setState({ isLoading: false });
     }
 
