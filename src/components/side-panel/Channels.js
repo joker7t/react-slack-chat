@@ -98,9 +98,16 @@ class Channels extends Component {
     }
 
     componentDidMount() {
-        console.log("didmount channel");
-        // example 
-        // this.props.geAllChannels();
+        //Need to fix 
+
+
+
+        let channelsAdded = [];
+        firebase.database().ref('channels').on("child_added", channelNode => {
+            channelsAdded.push(channelNode.val());
+        });
+        this.props.geAllChannels(channelsAdded);
+
     }
 
     componentWillReceiveProps(newProps) {
