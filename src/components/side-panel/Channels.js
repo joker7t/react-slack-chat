@@ -11,6 +11,7 @@ class Channels extends Component {
     constructor() {
         super();
         this.state = {
+            channelRef: firebase.database().ref('channels'),
             channels: [],
             modal: false,
             channelName: '',
@@ -47,8 +48,7 @@ class Channels extends Component {
 
     saveChannel = async () => {
         this.setState({ isLoading: true });
-        const channelRef = firebase.database().ref('channels');
-        const key = channelRef.push().key;
+        const key = this.state.channelRef.push().key;
         const { channelName, channelDetails } = this.state;
         const { displayName, photoURL } = this.props.user;
         const newChannel = {
@@ -61,7 +61,7 @@ class Channels extends Component {
             }
         };
         try {
-            await channelRef.child(key).update(newChannel);
+            await this.state.channelRef.child(key).update(newChannel);
             this.setState({
                 channelName: '',
                 channelDetails: ''
@@ -122,6 +122,10 @@ class Channels extends Component {
 
     componentWillReceiveProps(newProps) {
         this.setState({ channels: newProps.channels.channels });
+    }
+
+    componentWillUnmount() {
+        this.state.channelRef.off();
     }
 
     render() {
