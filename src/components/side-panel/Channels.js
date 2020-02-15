@@ -155,7 +155,7 @@ class Channels extends Component {
                             <Form.Field>
                                 <Input
                                     fluid
-                                    className={classnames("", {
+                                    className={classnames("input-add-channel", {
                                         "error": isInValid
                                     })}
                                     label="Name of Channel"
@@ -167,7 +167,7 @@ class Channels extends Component {
                             <Form.Field>
                                 <Input
                                     fluid
-                                    className={classnames("", {
+                                    className={classnames("input-add-channel", {
                                         "error": isInValid
                                     })}
                                     label="About the Channel"

@@ -16,6 +16,11 @@ html, body, .app {
     margin-top: -20px;
 }
 
+/* channel */
+.input-add-channel .label{
+    width: 150px;
+}
+
 /* messages */
 
 .message_header{
