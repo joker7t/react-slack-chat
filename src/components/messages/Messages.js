@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Segment, Comment } from "semantic-ui-react";
 import MessageForm from './MessageForm';
 import MessageHeader from './MessageHeader';
-import BlankMessage from "./BlankMessage";
+import InvertedSpinner from "../spinner/InvertedSpinner";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -12,13 +12,26 @@ class Messages extends Component {
     constructor() {
         super();
         this.state = {
+            isLoadingChannel: true,
             messageRef: firebase.database().ref('messages')
         };
     }
 
+    componentDidMount() {
+        if (this.props.channels) {
+            this.setState({ isLoadingChannel: this.props.channels.isLoadingChannel });
+        }
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.channels) {
+            this.setState({ isLoadingChannel: newProps.channels.isLoadingChannel });
+        }
+    }
+
     render() {
         return (
-            _.isEmpty(this.props.channel) ? <BlankMessage /> : <React.Fragment>
+            this.state.isLoadingChannel ? <InvertedSpinner /> : <React.Fragment>
                 <MessageHeader />
 
                 <Segment>
@@ -44,7 +57,7 @@ Messages.propTypes = {
 
 const mapStateToProps = (state) => ({
     user: state.users.user,
-    channel: state.channels.selectedChannel
+    channels: state.channels
 })
 
 export default connect(mapStateToProps, null)(Messages);
