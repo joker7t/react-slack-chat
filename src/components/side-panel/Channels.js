@@ -118,8 +118,10 @@ class Channels extends Component {
             channelsAdded.push(channelNode.val());
             this.props.getAllChannels(channelsAdded);
             this.setDefaultChannel();
+            //should be check, but not work with callback
             this.props.setIsLoadingChannel(false);
         });
+        this.props.setIsLoadingChannel(false);
     }
 
     componentWillReceiveProps(newProps) {

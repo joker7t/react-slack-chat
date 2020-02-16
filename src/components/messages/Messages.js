@@ -6,7 +6,6 @@ import InvertedSpinner from "../spinner/InvertedSpinner";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import _ from "lodash";
 
 class Messages extends Component {
     constructor() {
@@ -43,7 +42,7 @@ class Messages extends Component {
                 <MessageForm
                     messageRef={this.state.messageRef}
                     user={this.props.user}
-                    channel={this.props.channel}
+                    channel={this.props.channels.selectedChannel}
                 />
             </React.Fragment>
         );
@@ -52,7 +51,7 @@ class Messages extends Component {
 
 Messages.propTypes = {
     user: PropTypes.object.isRequired,
-    channel: PropTypes.object.isRequired
+    channels: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
