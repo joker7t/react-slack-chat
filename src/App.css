@@ -15,3 +15,29 @@ html, body, .app {
 .margin-top-minus-20{
     margin-top: -20px;
 }
+
+/* channel */
+.input-add-channel .label{
+    width: 150px;
+}
+
+/* messages */
+
+.message_header{
+    height: 11vh;
+}
+
+.messages{
+    height: 60vh;
+    overflow-y: scroll;
+}
+
+.message_form{
+    /* height: 16vh; */
+    z-index: 200;
+    position: fix !important;
+    width: 148%;
+    /* bottom: 1em; */
+    /* margin-left: 320px !important; */
+    /* left: 0; */
+}

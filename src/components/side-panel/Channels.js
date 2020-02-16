@@ -4,8 +4,8 @@ import firebase from "../../firebase";
 import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Spinner from "../Spinner";
-import { getAllChannels, setCurrentChannel } from "../../actions/channelAction";
+import Spinner from "../spinner/Spinner";
+import { getAllChannels, setCurrentChannel, setIsLoadingChannel } from "../../actions/channelAction";
 
 class Channels extends Component {
     constructor() {
@@ -66,6 +66,7 @@ class Channels extends Component {
                 channelName: '',
                 channelDetails: ''
             });
+            this.props.setCurrentChannel(newChannel);
             this.handleCloseModal();
             console.log(newChannel);
         } catch (error) {
@@ -117,7 +118,10 @@ class Channels extends Component {
             channelsAdded.push(channelNode.val());
             this.props.getAllChannels(channelsAdded);
             this.setDefaultChannel();
+            //should be check, but not work with callback
+            this.props.setIsLoadingChannel(false);
         });
+        this.props.setIsLoadingChannel(false);
     }
 
     componentWillReceiveProps(newProps) {
@@ -155,7 +159,7 @@ class Channels extends Component {
                             <Form.Field>
                                 <Input
                                     fluid
-                                    className={classnames("", {
+                                    className={classnames("input-add-channel", {
                                         "error": isInValid
                                     })}
                                     label="Name of Channel"
@@ -167,7 +171,7 @@ class Channels extends Component {
                             <Form.Field>
                                 <Input
                                     fluid
-                                    className={classnames("", {
+                                    className={classnames("input-add-channel", {
                                         "error": isInValid
                                     })}
                                     label="About the Channel"
@@ -198,7 +202,8 @@ Channels.propTypes = {
     user: PropTypes.object.isRequired,
     channels: PropTypes.object.isRequired,
     getAllChannels: PropTypes.func.isRequired,
-    setCurrentChannel: PropTypes.func.isRequired
+    setCurrentChannel: PropTypes.func.isRequired,
+    setIsLoadingChannel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -206,4 +211,4 @@ const mapStateToProps = (state) => ({
     channels: state.channels
 });
 
-export default connect(mapStateToProps, { getAllChannels, setCurrentChannel })(Channels);
+export default connect(mapStateToProps, { getAllChannels, setCurrentChannel, setIsLoadingChannel })(Channels);

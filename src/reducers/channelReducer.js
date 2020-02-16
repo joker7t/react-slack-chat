@@ -1,8 +1,9 @@
-import { GET_ALL_CHANNELS, SET_CURRENT_CHANNEL } from "./type";
+import { GET_ALL_CHANNELS, SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL } from "./type";
 
 const initialState = {
     selectedChannel: {},
-    channels: []
+    channels: [],
+    isLoadingChannel: true
 };
 
 export default function (state = initialState, action) {
@@ -16,6 +17,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 selectedChannel: action.payload
+            };
+        case IS_LOADING_CHANNEL:
+            return {
+                ...state,
+                isLoadingChannel: action.payload
             };
         default:
             return state;

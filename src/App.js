@@ -9,7 +9,7 @@ import 'semantic-ui-css/semantic.min.css';
 import store from './store';
 import { Provider } from 'react-redux';
 import { SET_USER } from "./reducers/type";
-import Spinner from "./components/Spinner";
+import Spinner from "./components/spinner/Spinner";
 import firebase from "./firebase";
 
 class App extends Component {
