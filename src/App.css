@@ -48,3 +48,7 @@ html, body, .app {
     border-left: 2px solid gray;
     padding-left: 8px;
 }
+
+.message_image{
+    padding: 1em;
+}
