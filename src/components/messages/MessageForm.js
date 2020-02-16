@@ -58,7 +58,7 @@ class MessageForm extends Component {
         }
     }
 
-    isDisabledButton = () => _.isEmpty(this.props.channel);
+    isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
 
     render() {
         return (
