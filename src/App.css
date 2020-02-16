@@ -33,11 +33,18 @@ html, body, .app {
 }
 
 .message_form{
-    /* height: 16vh; */
+    height: 16vh;
     z-index: 200;
     position: fix !important;
     width: 148%;
-    /* bottom: 1em; */
-    /* margin-left: 320px !important; */
-    /* left: 0; */
+}
+
+.message_self{
+    border-left: 2px solid orange;
+    padding-left: 8px;
+}
+
+.message{
+    border-left: 2px solid gray;
+    padding-left: 8px;
 }

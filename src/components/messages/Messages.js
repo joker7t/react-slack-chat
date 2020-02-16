@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Segment, Comment } from "semantic-ui-react";
 import MessageForm from './MessageForm';
+import Message from "./Message";
 import MessageHeader from './MessageHeader';
 import firebase from "../../firebase";
 import { connect } from "react-redux";
@@ -16,6 +17,16 @@ class Messages extends Component {
             messages: []
         };
     }
+
+    displayMessages = (messages) =>
+        messages.length > 0 && messages.map(message => (
+            <Message
+                key={message.timestamp}
+                message={message}
+                user={this.props.user}
+            />
+        ));
+
 
     componentDidMount() {
         const { channel } = this.props;
@@ -46,6 +57,7 @@ class Messages extends Component {
     }
 
     render() {
+        const { messages } = this.state;
         return (
             //Cannot use because of callback from firebase call a lot of times
             // this.state.isLoadingChannel ? <InvertedSpinner /> : 
@@ -54,7 +66,7 @@ class Messages extends Component {
 
                 <Segment>
                     <Comment.Group className="messages">
-
+                        {this.displayMessages(messages)}
                     </Comment.Group>
                 </Segment>
 
