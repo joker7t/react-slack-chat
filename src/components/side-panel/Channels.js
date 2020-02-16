@@ -5,7 +5,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../spinner/Spinner";
-import { getAllChannels, setCurrentChannel, setIsLoadingChannel } from "../../actions/channelAction";
+import { setCurrentChannel, setIsLoadingChannel } from "../../actions/channelAction";
 
 class Channels extends Component {
     constructor() {
@@ -84,7 +84,7 @@ class Channels extends Component {
         }
     }
 
-    isChannelActive = (channel) => this.props.channels.selectedChannel.id === channel.id;
+    isChannelActive = (channel) => this.props.channel.selectedChannel.id === channel.id;
 
     displayChannels = (channels) => {
         return channels.length > 0 && channels.map(channel => (
@@ -114,18 +114,14 @@ class Channels extends Component {
 
     componentDidMount() {
         let channelsAdded = [];
-        firebase.database().ref('channels').on("child_added", channelNode => {
+        this.state.channelRef.on("child_added", channelNode => {
             channelsAdded.push(channelNode.val());
-            this.props.getAllChannels(channelsAdded);
+            this.setState({ channels: channelsAdded });
             this.setDefaultChannel();
             //should be check, but not work with callback
             this.props.setIsLoadingChannel(false);
         });
         this.props.setIsLoadingChannel(false);
-    }
-
-    componentWillReceiveProps(newProps) {
-        this.setState({ channels: newProps.channels.channels });
     }
 
     componentWillUnmount() {
@@ -200,15 +196,14 @@ class Channels extends Component {
 
 Channels.propTypes = {
     user: PropTypes.object.isRequired,
-    channels: PropTypes.object.isRequired,
-    getAllChannels: PropTypes.func.isRequired,
+    channel: PropTypes.object.isRequired,
     setCurrentChannel: PropTypes.func.isRequired,
     setIsLoadingChannel: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-    user: state.users.user,
-    channels: state.channels
+    user: state.user.user,
+    channel: state.channel
 });
 
-export default connect(mapStateToProps, { getAllChannels, setCurrentChannel, setIsLoadingChannel })(Channels);
+export default connect(mapStateToProps, { setCurrentChannel, setIsLoadingChannel })(Channels);

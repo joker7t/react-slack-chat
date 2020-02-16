@@ -18,7 +18,7 @@ class UserPanel extends Component {
     }
 
     render() {
-        const { user } = this.props.users;
+        const { user } = this.props.user;
 
         const dropDownOptions = [
             {
@@ -65,11 +65,11 @@ class UserPanel extends Component {
 
 UserPanel.propTypes = {
     signOut: PropTypes.func.isRequired,
-    users: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    users: state.users
+    user: state.user
 });
 
 export default connect(mapStateToProps, { signOut })(UserPanel);

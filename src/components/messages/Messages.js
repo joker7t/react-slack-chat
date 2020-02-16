@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Segment, Comment } from "semantic-ui-react";
 import MessageForm from './MessageForm';
 import MessageHeader from './MessageHeader';
-import InvertedSpinner from "../spinner/InvertedSpinner";
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -11,26 +10,46 @@ class Messages extends Component {
     constructor() {
         super();
         this.state = {
-            isLoadingChannel: true,
-            messageRef: firebase.database().ref('messages')
+            //Cannot use because of callback from firebase call a lot of times
+            // isLoadingChannel: true,
+            messageRef: firebase.database().ref('messages'),
+            messages: []
         };
     }
 
     componentDidMount() {
-        if (this.props.channels) {
-            this.setState({ isLoadingChannel: this.props.channels.isLoadingChannel });
+        const { channel } = this.props;
+        // Cannot use because of callback from firebase call a lot of times
+        // if (this.props.channels) {
+        //     this.setState({ isLoadingChannel: isLoadingChannel });
+        // }
+        if (channel.id) {
+            let messagesAdded = [];
+            this.state.messageRef.child(channel.id).on("child_added", messageNode => {
+                messagesAdded.push(messageNode.val());
+                this.setState({ messages: messagesAdded });
+            });
         }
+
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.channels) {
-            this.setState({ isLoadingChannel: newProps.channels.isLoadingChannel });
+        this.setState({ messages: [] });
+        const { selectedChannel } = newProps.channel;
+        if (selectedChannel.id) {
+            let messagesAdded = [];
+            this.state.messageRef.child(selectedChannel.id).on("child_added", messageNode => {
+                messagesAdded.push(messageNode.val());
+                this.setState({ messages: messagesAdded });
+            });
         }
     }
 
     render() {
         return (
-            this.state.isLoadingChannel ? <InvertedSpinner /> : <React.Fragment>
+            //Cannot use because of callback from firebase call a lot of times
+            // this.state.isLoadingChannel ? <InvertedSpinner /> : 
+            <React.Fragment>
                 <MessageHeader />
 
                 <Segment>
@@ -42,7 +61,7 @@ class Messages extends Component {
                 <MessageForm
                     messageRef={this.state.messageRef}
                     user={this.props.user}
-                    channel={this.props.channels.selectedChannel}
+                    channel={this.props.channel.selectedChannel}
                 />
             </React.Fragment>
         );
@@ -51,12 +70,12 @@ class Messages extends Component {
 
 Messages.propTypes = {
     user: PropTypes.object.isRequired,
-    channels: PropTypes.object.isRequired
+    channel: PropTypes.object.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-    user: state.users.user,
-    channels: state.channels
+    user: state.user.user,
+    channel: state.channel,
 })
 
 export default connect(mapStateToProps, null)(Messages);
