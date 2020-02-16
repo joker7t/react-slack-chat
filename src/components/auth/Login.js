@@ -104,13 +104,13 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        if (!_.isEmpty(this.props.users.user)) {
+        if (!_.isEmpty(this.props.user.user)) {
             this.props.history.push(HOME_PATH);
         }
     }
 
     componentDidUpdate() {
-        if (!_.isEmpty(this.props.users.user)) {
+        if (!_.isEmpty(this.props.user.user)) {
             this.props.history.push(HOME_PATH);
         }
     }
@@ -150,11 +150,12 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-    signIn: PropTypes.func.isRequired
+    signIn: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => ({
-    users: state.users
+    user: state.user
 });
 
 export default connect(mapStateToProps, { signIn })(Login);

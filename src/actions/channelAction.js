@@ -1,11 +1,4 @@
-import { GET_ALL_CHANNELS, SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL } from "../reducers/type";
-
-export const getAllChannels = (channels) => dispatch => {
-    dispatch({
-        type: GET_ALL_CHANNELS,
-        payload: channels
-    });
-};
+import { SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL } from "../reducers/type";
 
 export const setCurrentChannel = (channel) => dispatch => {
     dispatch({
