@@ -9,7 +9,6 @@ class Message extends Component {
     timeFromNow = (timestamp) => moment(timestamp).fromNow();
 
     render() {
-        console.log(this.props);
         const { message } = this.props;
         return (
             <Comment>

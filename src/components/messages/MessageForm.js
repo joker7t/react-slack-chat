@@ -63,6 +63,10 @@ class MessageForm extends Component {
         }
     }
 
+    uploadFile = (file, metadata) => {
+        console.log(file, metadata);
+    }
+
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
 
     render() {
@@ -102,6 +106,7 @@ class MessageForm extends Component {
                     <FileModal
                         modal={this.state.modal}
                         closeModal={this.closeModal}
+                        uploadFile={this.uploadFile}
                     />
                 </Button.Group>
             </Segment>
