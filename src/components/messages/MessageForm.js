@@ -3,6 +3,9 @@ import { Segment, Button, Input } from "semantic-ui-react";
 import firebase from "../../firebase";
 import classnames from "classnames";
 import _ from "lodash";
+import FileModal from "./FileModal";
+import uuidv4 from "uuid/v4";
+import ProgressBar from './ProgressBar';
 
 class MessageForm extends Component {
     constructor() {
@@ -11,16 +14,32 @@ class MessageForm extends Component {
         this.state = {
             message: '',
             isLoading: false,
-            isMessageHasError: false
+            isMessageHasError: false,
+            modal: false,
+            file: null,
+            isModalHasError: false,
+            //properties for upload file
+            storageRef: firebase.storage().ref(),
+            uploadTask: null,
+            uploadState: '',
+            percentageUploaded: 0,
+            errors: []
         };
-
     }
+
+    openModal = () => this.setState({ modal: true });
+
+    closeModal = () => this.setState({ modal: false, file: null, isModalHasError: false });
+
+    setFile = (file) => this.setState({ file: file });
+
+    setIsModalHasError = (isModalHasError) => this.setState({ isModalHasError: isModalHasError });
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    createMessage = () => {
+    createMessage = (downloadURL = null) => {
         const { user } = this.props;
         const { message } = this.state;
         const messageObj = {
@@ -30,7 +49,11 @@ class MessageForm extends Component {
                 name: user.displayName,
                 avatar: user.photoURL
             },
-            content: message
+        }
+        if (downloadURL !== null) {
+            messageObj['image'] = downloadURL;
+        } else {
+            messageObj['content'] = message;
         }
         console.log(messageObj);
         return messageObj;
@@ -56,6 +79,63 @@ class MessageForm extends Component {
         } else {
             this.setState({ isLoading: false, isMessageHasError: true });
         }
+    }
+
+    uploadFile = (file, metadata) => {
+        const { channel, messageRef, setProgressBar } = this.props;
+        const { storageRef } = this.state;
+
+        const pathToUpload = channel.id;
+        const filePath = `chat/public/${uuidv4()}.jpg`;
+
+        setProgressBar(true);
+        this.setState({
+            uploadState: 'uploading',
+            uploadTask: storageRef.child(filePath).put(file, metadata)
+        }, () => {
+            this.state.uploadTask.on('state_changed', snap => {
+                const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                this.setState({ percentageUploaded: percentageUploaded });
+            },
+                error => {
+                    this.handleError(error);
+                }, () => {
+                    this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                        this.sendFileMessage(downloadURL, messageRef, pathToUpload);
+                    }).catch(error => {
+                        this.handleError(error);
+                    })
+                }
+            )
+        }
+
+        )
+
+    }
+
+    sendFileMessage = (downloadURL, messageRef, pathToUpload) => {
+        messageRef.child(pathToUpload)
+            .push()
+            .set(this.createMessage(downloadURL))
+            .then(() => {
+                this.setState({ uploadState: 'done' });
+                this.props.setProgressBar(false);
+            }).catch(error => {
+                console.error(error);
+                this.setState({
+                    errors: this.state.errors.concat(error)
+                });
+            })
+    }
+
+    handleError = (error) => {
+        console.log(error);
+        this.setState({
+            errors: this.state.errors.concat(error),
+            uploadState: 'error',
+            uploadTask: null
+        });
+        this.props.setProgressBar(true);
     }
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
@@ -92,8 +172,22 @@ class MessageForm extends Component {
                         labelPosition="right"
                         icon="cloud upload"
                         disabled={this.isDisabledButton()}
+                        onClick={this.openModal}
                     />
                 </Button.Group>
+                <ProgressBar
+                    uploadState={this.state.uploadState}
+                    percentageUploaded={this.state.percentageUploaded}
+                />
+                <FileModal
+                    modal={this.state.modal}
+                    closeModal={this.closeModal}
+                    uploadFile={this.uploadFile}
+                    file={this.state.file}
+                    isModalHasError={this.state.isModalHasError}
+                    setFile={this.setFile}
+                    setIsModalHasError={this.setIsModalHasError}
+                />
             </Segment>
         );
     }

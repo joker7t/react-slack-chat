@@ -14,9 +14,12 @@ class Messages extends Component {
             //Cannot use because of callback from firebase call a lot of times
             // isLoadingChannel: true,
             messageRef: firebase.database().ref('messages'),
-            messages: []
+            messages: [],
+            progressBar: false
         };
     }
+
+    setProgressBar = (isProgressBar) => this.setState({ progressBar: isProgressBar });
 
     displayMessages = (messages) =>
         messages.length > 0 && messages.map(message => (
@@ -65,7 +68,7 @@ class Messages extends Component {
                 <MessageHeader />
 
                 <Segment>
-                    <Comment.Group className="messages">
+                    <Comment.Group className={this.state.progressBar ? "messages_progress" : "messages"}>
                         {this.displayMessages(messages)}
                     </Comment.Group>
                 </Segment>
@@ -74,6 +77,7 @@ class Messages extends Component {
                     messageRef={this.state.messageRef}
                     user={this.props.user}
                     channel={this.props.channel.selectedChannel}
+                    setProgressBar={this.setProgressBar}
                 />
             </React.Fragment>
         );
