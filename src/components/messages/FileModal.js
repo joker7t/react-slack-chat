@@ -1,27 +1,33 @@
 import React, { Component } from 'react';
 import mime from "mime-types";
 import { Modal, Input, Button, Icon } from "semantic-ui-react";
+import classnames from "classnames";
 
 class FileModal extends Component {
     constructor() {
         super();
 
         this.state = {
-            file: null,
-            authorized: ['image/jpeg', 'image/png']
+            authorized: ['image/jpeg', 'image/png'],
+            hasError: false
         };
     }
 
     addFile = (e) => {
+        const { setFile, setIsModalHasError } = this.props;
         const file = e.target.files[0];
         if (file) {
-            this.setState({ file: file });
+            setFile(file);
+            if (this.isAuthorized(file)) {
+                setIsModalHasError(false);
+            } else {
+                setIsModalHasError(true);
+            }
         }
     }
 
     sendFile = () => {
-        const { file } = this.state;
-        const { uploadFile, closeModal } = this.props;
+        const { uploadFile, closeModal, file } = this.props;
         if (file !== null && this.isAuthorized(file)) {
             const metadata = { contentType: mime.lookup(file.name) };
             uploadFile(file, metadata);
@@ -34,8 +40,12 @@ class FileModal extends Component {
 
     clearFile = () => this.setState({ file: null });
 
+    componentDidMount() {
+        this.setState({ file: null });
+    }
+
     render() {
-        const { modal, closeModal } = this.props;
+        const { modal, closeModal, isModalHasError } = this.props;
         return (
             <Modal basic open={modal} onClose={closeModal}>
                 <Modal.Header>Select an Image file</Modal.Header>
@@ -46,6 +56,9 @@ class FileModal extends Component {
                         name="file"
                         type="file"
                         onChange={this.addFile}
+                        className={classnames("", {
+                            "error": isModalHasError
+                        })}
                     />
                 </Modal.Content>
                 <Modal.Actions>

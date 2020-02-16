@@ -13,13 +13,19 @@ class MessageForm extends Component {
             message: '',
             isLoading: false,
             isMessageHasError: false,
-            modal: false
+            modal: false,
+            file: null,
+            isModalHasError: false
         };
     }
 
     openModal = () => this.setState({ modal: true });
 
-    closeModal = () => this.setState({ modal: false });
+    closeModal = () => this.setState({ modal: false, file: null, isModalHasError: false });
+
+    setFile = (file) => this.setState({ file: file });
+
+    setIsModalHasError = (isModalHasError) => this.setState({ isModalHasError: isModalHasError });
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
@@ -107,6 +113,10 @@ class MessageForm extends Component {
                         modal={this.state.modal}
                         closeModal={this.closeModal}
                         uploadFile={this.uploadFile}
+                        file={this.state.file}
+                        isModalHasError={this.state.isModalHasError}
+                        setFile={this.setFile}
+                        setIsModalHasError={this.setIsModalHasError}
                     />
                 </Button.Group>
             </Segment>
