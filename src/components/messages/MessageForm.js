@@ -3,6 +3,7 @@ import { Segment, Button, Input } from "semantic-ui-react";
 import firebase from "../../firebase";
 import classnames from "classnames";
 import _ from "lodash";
+import FileModal from "./FileModal";
 
 class MessageForm extends Component {
     constructor() {
@@ -11,10 +12,14 @@ class MessageForm extends Component {
         this.state = {
             message: '',
             isLoading: false,
-            isMessageHasError: false
+            isMessageHasError: false,
+            modal: false
         };
-
     }
+
+    openModal = () => this.setState({ modal: true });
+
+    closeModal = () => this.setState({ modal: false });
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
@@ -92,6 +97,11 @@ class MessageForm extends Component {
                         labelPosition="right"
                         icon="cloud upload"
                         disabled={this.isDisabledButton()}
+                        onClick={this.openModal}
+                    />
+                    <FileModal
+                        modal={this.state.modal}
+                        closeModal={this.closeModal}
                     />
                 </Button.Group>
             </Segment>

@@ -22,13 +22,9 @@ class Channels extends Component {
         };
     }
 
-    handleCloseModal = () => {
-        this.setState({ modal: false, isInValid: false });
-    }
+    handleCloseModal = () => this.setState({ modal: false, isInValid: false, channelName: '', channelDetails: '' });
 
-    handleOpenModal = () => {
-        this.setState({ modal: true });
-    }
+    handleOpenModal = () => this.setState({ modal: true });
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
