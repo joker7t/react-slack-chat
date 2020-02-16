@@ -5,6 +5,7 @@ import classnames from "classnames";
 import _ from "lodash";
 import FileModal from "./FileModal";
 import uuidv4 from "uuid/v4";
+import ProgressBar from './ProgressBar';
 
 class MessageForm extends Component {
     constructor() {
@@ -81,18 +82,19 @@ class MessageForm extends Component {
     }
 
     uploadFile = (file, metadata) => {
-        const { channel, messageRef } = this.props;
+        const { channel, messageRef, setProgressBar } = this.props;
         const { storageRef } = this.state;
 
         const pathToUpload = channel.id;
         const filePath = `chat/public/${uuidv4()}.jpg`;
 
+        setProgressBar(true);
         this.setState({
             uploadState: 'uploading',
             uploadTask: storageRef.child(filePath).put(file, metadata)
         }, () => {
             this.state.uploadTask.on('state_changed', snap => {
-                const percentageUploaded = Math.round((snap.bytesTranferred / snap.totalBytes) * 100);
+                const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
                 this.setState({ percentageUploaded: percentageUploaded });
             },
                 error => {
@@ -117,6 +119,7 @@ class MessageForm extends Component {
             .set(this.createMessage(downloadURL))
             .then(() => {
                 this.setState({ uploadState: 'done' });
+                this.props.setProgressBar(false);
             }).catch(error => {
                 console.error(error);
                 this.setState({
@@ -132,6 +135,7 @@ class MessageForm extends Component {
             uploadState: 'error',
             uploadTask: null
         });
+        this.props.setProgressBar(true);
     }
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
@@ -170,16 +174,20 @@ class MessageForm extends Component {
                         disabled={this.isDisabledButton()}
                         onClick={this.openModal}
                     />
-                    <FileModal
-                        modal={this.state.modal}
-                        closeModal={this.closeModal}
-                        uploadFile={this.uploadFile}
-                        file={this.state.file}
-                        isModalHasError={this.state.isModalHasError}
-                        setFile={this.setFile}
-                        setIsModalHasError={this.setIsModalHasError}
-                    />
                 </Button.Group>
+                <ProgressBar
+                    uploadState={this.state.uploadState}
+                    percentageUploaded={this.state.percentageUploaded}
+                />
+                <FileModal
+                    modal={this.state.modal}
+                    closeModal={this.closeModal}
+                    uploadFile={this.uploadFile}
+                    file={this.state.file}
+                    isModalHasError={this.state.isModalHasError}
+                    setFile={this.setFile}
+                    setIsModalHasError={this.setIsModalHasError}
+                />
             </Segment>
         );
     }

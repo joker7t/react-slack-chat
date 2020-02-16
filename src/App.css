@@ -32,6 +32,11 @@ html, body, .app {
     overflow-y: scroll;
 }
 
+.messages_progress{
+    height: 56vh;
+    overflow-y: scroll;
+}
+
 .message_form{
     height: 16vh;
     z-index: 200;
@@ -51,4 +56,11 @@ html, body, .app {
 
 .message_image{
     padding: 1em;
+}
+
+/* Progress Bar */
+.progress_bar{
+    width: 110%;
+    margin: 0.3em 1.1em 0 0 !important;
+    transform: translateY(1.3em);
 }
