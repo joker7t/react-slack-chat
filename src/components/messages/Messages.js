@@ -30,11 +30,28 @@ class Messages extends Component {
             />
         ));
 
+    sleep = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    //not work because of loading image
     setDefaultScroll = () => {
         const messageContent = document.querySelector('#messageContent');
         if (messageContent !== null) {
             messageContent.scrollTop = messageContent.scrollHeight;
+
         }
+    }
+
+    getChannelUsers = (messages) => {
+        const channelUsers = messages.reduce((acc, message) => {
+            if (!acc.includes(message.user.id)) {
+                acc.push(message.user.id);
+            }
+            return acc;
+        }, []);
+        const plural = channelUsers.length > 1 || channelUsers.length === 0 ? 's' : '';
+        return `${channelUsers.length} user${plural}`;
     }
 
     componentDidMount() {
@@ -50,7 +67,6 @@ class Messages extends Component {
                 this.setState({ messages: messagesAdded });
             });
         }
-
     }
 
     componentWillReceiveProps(newProps) {
@@ -67,11 +83,15 @@ class Messages extends Component {
 
     render() {
         const { messages } = this.state;
+        const { selectedChannel } = this.props.channel;
         return (
             //Cannot use because of callback from firebase call a lot of times
             // this.state.isLoadingChannel ? <InvertedSpinner /> : 
             <React.Fragment>
-                <MessageHeader />
+                <MessageHeader
+                    channelName={selectedChannel.name}
+                    channelUsers={this.getChannelUsers(messages)}
+                />
 
                 <Segment>
                     <Comment.Group
@@ -79,7 +99,6 @@ class Messages extends Component {
                         id="messageContent"
                     >
                         {this.displayMessages(messages)}
-                        {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>
 
