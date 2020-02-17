@@ -30,6 +30,12 @@ class Messages extends Component {
             />
         ));
 
+    setDefaultScroll = () => {
+        const messageContent = document.querySelector('#messageContent');
+        if (messageContent !== null) {
+            messageContent.scrollTop = messageContent.scrollHeight;
+        }
+    }
 
     componentDidMount() {
         const { channel } = this.props;
@@ -68,8 +74,12 @@ class Messages extends Component {
                 <MessageHeader />
 
                 <Segment>
-                    <Comment.Group className={this.state.progressBar ? "messages_progress" : "messages"}>
+                    <Comment.Group
+                        className={this.state.progressBar ? "messages_progress" : "messages"}
+                        id="messageContent"
+                    >
                         {this.displayMessages(messages)}
+                        {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>
 

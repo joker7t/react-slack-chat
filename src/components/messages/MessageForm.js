@@ -171,7 +171,7 @@ class MessageForm extends Component {
                         content="Upload Media"
                         labelPosition="right"
                         icon="cloud upload"
-                        disabled={this.isDisabledButton()}
+                        disabled={this.isDisabledButton() || this.state.uploadState === 'uploading'}
                         onClick={this.openModal}
                     />
                 </Button.Group>
