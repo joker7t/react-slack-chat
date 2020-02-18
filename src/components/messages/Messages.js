@@ -15,7 +15,10 @@ class Messages extends Component {
             // isLoadingChannel: true,
             messageRef: firebase.database().ref('messages'),
             messages: [],
-            progressBar: false
+            progressBar: false,
+            searchMessage: '',
+            searchMessageLoading: false,
+            searchResult: []
         };
     }
 
@@ -30,17 +33,16 @@ class Messages extends Component {
             />
         ));
 
-    sleep = (ms) => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     //not work because of loading image
     setDefaultScroll = () => {
-        const messageContent = document.querySelector('#messageContent');
-        if (messageContent !== null) {
-            messageContent.scrollTop = messageContent.scrollHeight;
+        setTimeout(() => {
+            const messageContent = document.querySelector('#messageContent');
+            if (messageContent !== null) {
+                messageContent.scrollTop = messageContent.scrollHeight;
 
-        }
+            }
+        }, 1);
+
     }
 
     getChannelUsers = (messages) => {
@@ -52,6 +54,32 @@ class Messages extends Component {
         }, []);
         const plural = channelUsers.length > 1 || channelUsers.length === 0 ? 's' : '';
         return `${channelUsers.length} user${plural}`;
+    }
+
+    handleSearchMessageChange = (e) => {
+        this.setState({
+            searchMessage: e.target.value,
+            searchMessageLoading: true
+        },
+            () => {
+                this.handleSearchMessage();
+            });
+    }
+
+    handleSearchMessage = () => {
+
+        const channelMessages = [...this.state.messages];
+        const regex = new RegExp(this.state.searchMessage, 'gi');
+        const searchResult = this.state.searchMessage === '' ?
+            channelMessages :
+            channelMessages.reduce((acc, message) => {
+                if (message.content && message.content.match(regex)) {
+                    acc.push(message);
+                }
+                return acc;
+            }, []);
+        this.setState({ searchResult: searchResult });
+        setTimeout(() => this.setState({ searchMessageLoading: false }), 500);
     }
 
     componentDidMount() {
@@ -82,7 +110,7 @@ class Messages extends Component {
     }
 
     render() {
-        const { messages } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
         const { selectedChannel } = this.props.channel;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -91,6 +119,8 @@ class Messages extends Component {
                 <MessageHeader
                     channelName={selectedChannel.name}
                     channelUsers={this.getChannelUsers(messages)}
+                    handleSearchMessageChange={this.handleSearchMessageChange}
+                    searchMessageLoading={searchMessageLoading}
                 />
 
                 <Segment>
@@ -98,7 +128,10 @@ class Messages extends Component {
                         className={this.state.progressBar ? "messages_progress" : "messages"}
                         id="messageContent"
                     >
-                        {this.displayMessages(messages)}
+                        {searchMessage === '' ?
+                            this.displayMessages(messages) :
+                            this.displayMessages(searchResult)}
+                        {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>
 

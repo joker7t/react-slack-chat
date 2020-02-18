@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Button, Input } from "semantic-ui-react";
+import { Segment, Button, Input, Form } from "semantic-ui-react";
 import firebase from "../../firebase";
 import classnames from "classnames";
 import _ from "lodash";
@@ -59,7 +59,8 @@ class MessageForm extends Component {
         return messageObj;
     }
 
-    sendMessage = async () => {
+    sendMessage = async (e) => {
+        e.preventDefault();
         const { channel, messageRef } = this.props;
         const { message } = this.state;
 
@@ -75,7 +76,7 @@ class MessageForm extends Component {
                 this.setState({ isMessageHasError: true });
                 console.log(error);
             }
-            this.setState({ isLoading: false, message: '' });
+            this.setState({ isLoading: false, message: '', isMessageHasError: false });
         } else {
             this.setState({ isLoading: false, isMessageHasError: true });
         }
@@ -89,28 +90,31 @@ class MessageForm extends Component {
         const filePath = `chat/public/${uuidv4()}.jpg`;
 
         setProgressBar(true);
-        this.setState({
-            uploadState: 'uploading',
-            uploadTask: storageRef.child(filePath).put(file, metadata)
-        }, () => {
-            this.state.uploadTask.on('state_changed', snap => {
-                const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-                this.setState({ percentageUploaded: percentageUploaded });
+        this.setState(
+            {
+                uploadState: 'uploading',
+                uploadTask: storageRef.child(filePath).put(file, metadata)
             },
-                error => {
-                    this.handleError(error);
-                }, () => {
-                    this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                        this.sendFileMessage(downloadURL, messageRef, pathToUpload);
-                    }).catch(error => {
-                        this.handleError(error);
-                    })
-                }
-            )
-        }
-
+            //this block needs to use callback because it need to use this NEW state imediately
+            () => {
+                this.state.uploadTask.on('state_changed',
+                    snap => {
+                        const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                        this.setState({ percentageUploaded: percentageUploaded });
+                    },
+                    error => {
+                        this.handleError(error)
+                    },
+                    () => {
+                        this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                            this.sendFileMessage(downloadURL, messageRef, pathToUpload);
+                        }).catch(error => {
+                            this.handleError(error);
+                        })
+                    }
+                )
+            }
         )
-
     }
 
     sendFileMessage = (downloadURL, messageRef, pathToUpload) => {
@@ -135,7 +139,7 @@ class MessageForm extends Component {
             uploadState: 'error',
             uploadTask: null
         });
-        this.props.setProgressBar(true);
+        this.props.setProgressBar(false);
     }
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
@@ -143,38 +147,41 @@ class MessageForm extends Component {
     render() {
         return (
             <Segment className="message_form">
-                <Input
-                    fluid
-                    className={classnames("input-add-channel", {
-                        "error": this.state.isMessageHasError
-                    })}
-                    name="message"
-                    style={{ marginBottom: '0.7em' }}
-                    label={<Button icon={'add'} />}
-                    labelPosition="left"
-                    placeholder="Write you message"
-                    value={this.state.message}
-                    onChange={this.onChange}
-                />
-
-                <Button.Group icon widths="2">
-                    <Button
-                        color="orange"
-                        content="Add Reply"
+                <Form onSubmit={this.sendMessage}>
+                    <Input
+                        fluid
+                        className={classnames("input-add-channel", {
+                            "error": this.state.isMessageHasError
+                        })}
+                        name="message"
+                        style={{ marginBottom: '0.7em' }}
+                        label={<Button icon={'add'} />}
                         labelPosition="left"
-                        icon="edit"
-                        disabled={this.isDisabledButton()}
-                        onClick={() => this.sendMessage()}
+                        placeholder="Write you message"
+                        value={this.state.message}
+                        onChange={this.onChange}
                     />
-                    <Button
-                        color="teal"
-                        content="Upload Media"
-                        labelPosition="right"
-                        icon="cloud upload"
-                        disabled={this.isDisabledButton() || this.state.uploadState === 'uploading'}
-                        onClick={this.openModal}
-                    />
-                </Button.Group>
+
+                    <Button.Group icon widths="2">
+                        <Button
+                            color="orange"
+                            content="Add Reply"
+                            labelPosition="left"
+                            icon="edit"
+                            disabled={this.isDisabledButton()}
+                            onClick={this.sendMessage}
+                        />
+                        <Button
+                            color="teal"
+                            content="Upload Media"
+                            labelPosition="right"
+                            icon="cloud upload"
+                            disabled={this.isDisabledButton() || this.state.uploadState === 'uploading'}
+                            onClick={this.openModal}
+                        />
+                    </Button.Group>
+
+                </Form>
                 <ProgressBar
                     uploadState={this.state.uploadState}
                     percentageUploaded={this.state.percentageUploaded}
