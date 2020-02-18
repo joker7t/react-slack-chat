@@ -35,11 +35,14 @@ class Messages extends Component {
 
     //not work because of loading image
     setDefaultScroll = () => {
-        const messageContent = document.querySelector('#messageContent');
-        if (messageContent !== null) {
-            messageContent.scrollTop = messageContent.scrollHeight;
+        setTimeout(() => {
+            const messageContent = document.querySelector('#messageContent');
+            if (messageContent !== null) {
+                messageContent.scrollTop = messageContent.scrollHeight;
 
-        }
+            }
+        }, 1);
+
     }
 
     getChannelUsers = (messages) => {
