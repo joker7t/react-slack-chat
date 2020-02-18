@@ -15,7 +15,10 @@ class Messages extends Component {
             // isLoadingChannel: true,
             messageRef: firebase.database().ref('messages'),
             messages: [],
-            progressBar: false
+            progressBar: false,
+            searchMessage: '',
+            searchMessageLoading: false,
+            searchResult: []
         };
     }
 
@@ -54,6 +57,33 @@ class Messages extends Component {
         return `${channelUsers.length} user${plural}`;
     }
 
+    handleSearchMessageChange = (e) => {
+        this.setState({
+            searchMessage: e.target.value,
+            searchMessageLoading: true
+        },
+            () => {
+                this.handleSearchMessage();
+            });
+    }
+
+    handleSearchMessage = () => {
+
+        const channelMessages = [...this.state.messages];
+        const regex = new RegExp(this.state.searchMessage, 'gi');
+        const searchResult = this.state.searchMessage === '' ?
+            channelMessages :
+            channelMessages.reduce((acc, message) => {
+                if (message.content && message.content.match(regex)) {
+                    acc.push(message);
+                }
+                return acc;
+            }, []);
+        console.log('123')
+        this.setState({ searchResult: searchResult });
+        setTimeout(() => this.setState({ searchMessageLoading: false }), 500);
+    }
+
     componentDidMount() {
         const { channel } = this.props;
         // Cannot use because of callback from firebase call a lot of times
@@ -82,7 +112,7 @@ class Messages extends Component {
     }
 
     render() {
-        const { messages } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
         const { selectedChannel } = this.props.channel;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -91,6 +121,8 @@ class Messages extends Component {
                 <MessageHeader
                     channelName={selectedChannel.name}
                     channelUsers={this.getChannelUsers(messages)}
+                    handleSearchMessageChange={this.handleSearchMessageChange}
+                    searchMessageLoading={searchMessageLoading}
                 />
 
                 <Segment>
@@ -98,7 +130,9 @@ class Messages extends Component {
                         className={this.state.progressBar ? "messages_progress" : "messages"}
                         id="messageContent"
                     >
-                        {this.displayMessages(messages)}
+                        {searchMessage === '' ?
+                            this.displayMessages(messages) :
+                            this.displayMessages(searchResult)}
                         {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>
