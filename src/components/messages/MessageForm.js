@@ -94,6 +94,7 @@ class MessageForm extends Component {
                 uploadState: 'uploading',
                 uploadTask: storageRef.child(filePath).put(file, metadata)
             },
+            //this block needs to use callback because it need to use this NEW state imediately
             () => {
                 this.state.uploadTask.on('state_changed',
                     snap => {
