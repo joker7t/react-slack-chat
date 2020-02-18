@@ -99,6 +99,7 @@ class Messages extends Component {
                         id="messageContent"
                     >
                         {this.displayMessages(messages)}
+                        {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>
 

@@ -89,28 +89,30 @@ class MessageForm extends Component {
         const filePath = `chat/public/${uuidv4()}.jpg`;
 
         setProgressBar(true);
-        this.setState({
-            uploadState: 'uploading',
-            uploadTask: storageRef.child(filePath).put(file, metadata)
-        }, () => {
-            this.state.uploadTask.on('state_changed', snap => {
-                const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-                this.setState({ percentageUploaded: percentageUploaded });
+        this.setState(
+            {
+                uploadState: 'uploading',
+                uploadTask: storageRef.child(filePath).put(file, metadata)
             },
-                error => {
-                    this.handleError(error);
-                }, () => {
-                    this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                        this.sendFileMessage(downloadURL, messageRef, pathToUpload);
-                    }).catch(error => {
-                        this.handleError(error);
-                    })
-                }
-            )
-        }
-
+            () => {
+                this.state.uploadTask.on('state_changed',
+                    snap => {
+                        const percentageUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                        this.setState({ percentageUploaded: percentageUploaded });
+                    },
+                    error => {
+                        this.handleError(error)
+                    },
+                    () => {
+                        this.state.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                            this.sendFileMessage(downloadURL, messageRef, pathToUpload);
+                        }).catch(error => {
+                            this.handleError(error);
+                        })
+                    }
+                )
+            }
         )
-
     }
 
     sendFileMessage = (downloadURL, messageRef, pathToUpload) => {
@@ -135,7 +137,7 @@ class MessageForm extends Component {
             uploadState: 'error',
             uploadTask: null
         });
-        this.props.setProgressBar(true);
+        this.props.setProgressBar(false);
     }
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
