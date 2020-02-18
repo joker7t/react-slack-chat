@@ -33,10 +33,6 @@ class Messages extends Component {
             />
         ));
 
-    sleep = (ms) => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     //not work because of loading image
     setDefaultScroll = () => {
         const messageContent = document.querySelector('#messageContent');
@@ -79,7 +75,6 @@ class Messages extends Component {
                 }
                 return acc;
             }, []);
-        console.log('123')
         this.setState({ searchResult: searchResult });
         setTimeout(() => this.setState({ searchMessageLoading: false }), 500);
     }
