@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Modal, Form, Input, Button, Message } from "semantic-ui-react";
+import { Menu, Icon, Modal, Form, Input, Button, Message, Label } from "semantic-ui-react";
 import firebase from "../../firebase";
 import classnames from "classnames";
 import PropTypes from "prop-types";
@@ -12,13 +12,15 @@ class Channels extends Component {
         super();
         this.state = {
             channelRef: firebase.database().ref('channels'),
+            messageRef: firebase.database().ref('messages'),
             channels: [],
             modal: false,
             channelName: '',
             channelDetails: '',
             isLoading: false,
             isInValid: false,
-            isFirstload: true
+            isFirstload: true,
+            notifications: []
         };
     }
 
@@ -91,13 +93,44 @@ class Channels extends Component {
                 style={{ opacity: 0.7 }}
                 active={this.isChannelActive(channel)}
             >
+                {this.getNotificationCount(channel) &&
+                    <Label color='red'>
+                        {this.getNotificationCount(channel)}
+                    </Label>
+                }
                 # {channel.name}
             </Menu.Item>
         ))
     }
 
+    getNotificationCount = (channel) => {
+        let count = 0;
+        this.state.notifications.forEach(notification => {
+            if (notification.id === channel.id) {
+                count = notification.count;
+            }
+            console.log(count)
+
+        })
+        if (count > 0) return count;
+    }
+
     onCLickForChannel = (channel) => {
         this.props.setCurrentChannel(channel);
+        this.clearNotification(channel);
+    }
+
+    clearNotification = (channel) => {
+        let index = this.state.notifications
+            .findIndex(notification => notification.id === channel.id);
+        if (index !== -1) {
+
+            let updateNotification = [...this.state.notifications];
+            updateNotification[index].lastTotal = this.state.notifications[index].lastKnownTotal;
+            updateNotification[index].count = 0;
+            console.log(updateNotification[index]);
+            this.setState({ notifications: updateNotification });
+        }
     }
 
     setDefaultChannel = () => {
@@ -108,12 +141,49 @@ class Channels extends Component {
         this.setState({ isFirstload: false });
     }
 
+    addNotificationListener = channelId => {
+        this.state.messageRef.child(channelId).on('value', snap => {
+            if (this.props.channel.selectedChannel) {
+                this.handleNotification(channelId, this.props.channel.selectedChannel.id, this.state.notifications, snap);
+            }
+        })
+    }
+
+    handleNotification = (channelId, selectedChannelId, notifications, snap) => {
+        let lastTotal = 0;
+
+        let index = notifications.findIndex(notification => notification.id === channelId);
+
+        if (index !== -1) {
+            if (channelId !== selectedChannelId) {
+                lastTotal = notifications[index].total;
+                if (snap.numChildren() - lastTotal > 0) {
+                    notifications[index].count = snap.numChildren() - lastTotal;
+                }
+            } else {
+                notifications[index].count = 0;
+                notifications[index].total = snap.numChildren();
+            }
+            notifications[index].lastKnownTotal = snap.numChildren();
+        } else {
+            notifications.push({
+                id: channelId,
+                total: snap.numChildren(),
+                lastKnownTotal: snap.numChildren(),
+                count: 0
+            })
+        }
+        this.setState({ notifications });
+    }
+
     componentDidMount() {
         let channelsAdded = [];
         this.state.channelRef.on("child_added", channelNode => {
             channelsAdded.push(channelNode.val());
             this.setState({ channels: channelsAdded });
             this.setDefaultChannel();
+            this.addNotificationListener(channelNode.key);
+
             //should be check, but not work with callback
             this.props.setIsLoadingChannel(false);
         });
