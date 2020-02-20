@@ -62,6 +62,7 @@ class MessageForm extends Component {
     sendMessage = async (e) => {
         e.preventDefault();
         const { channel, messageRef } = this.props;
+        console.log(messageRef)
         const { message } = this.state;
 
         if (message) {
@@ -82,18 +83,23 @@ class MessageForm extends Component {
         }
     }
 
+    getFilePath = (isPrivateChannel, channel) =>
+        isPrivateChannel ? `chat/private-${channel.id}/${uuidv4()}.jpg` : `chat/public/${uuidv4()}.jpg`
+
+
     uploadFile = (file, metadata) => {
-        const { channel, messageRef, setProgressBar } = this.props;
+        const { channel, messageRef, setProgressBar, isPrivateChannel } = this.props;
         const { storageRef } = this.state;
 
         const pathToUpload = channel.id;
-        const filePath = `chat/public/${uuidv4()}.jpg`;
+        const filePath = this.getFilePath(isPrivateChannel, channel);
 
         setProgressBar(true);
         this.setState(
             {
                 uploadState: 'uploading',
-                uploadTask: storageRef.child(filePath).put(file, metadata)
+                uploadTask: storageRef.child(filePath).put(file, metadata),
+                isMessageHasError: false
             },
             //this block needs to use callback because it need to use this NEW state imediately
             () => {

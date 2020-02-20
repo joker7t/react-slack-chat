@@ -14,6 +14,7 @@ class Messages extends Component {
             //Cannot use because of callback from firebase call a lot of times
             // isLoadingChannel: true,
             messageRef: firebase.database().ref('messages'),
+            privateMessageRef: firebase.database().ref('privateMessages'),
             messages: [],
             progressBar: false,
             searchMessage: '',
@@ -21,6 +22,9 @@ class Messages extends Component {
             searchResult: []
         };
     }
+
+    getMessageRef = () => this.props.channel.isPrivateChannel ? this.state.privateMessageRef : this.state.messageRef;
+
 
     setProgressBar = (isProgressBar) => this.setState({ progressBar: isProgressBar });
 
@@ -90,7 +94,7 @@ class Messages extends Component {
         // }
         if (channel.id) {
             let messagesAdded = [];
-            this.state.messageRef.child(channel.id).on("child_added", messageNode => {
+            this.getMessageRef().child(channel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
                 this.setState({ messages: messagesAdded });
             });
@@ -98,11 +102,12 @@ class Messages extends Component {
     }
 
     componentWillReceiveProps(newProps) {
+        const messageRef = newProps.channel.isPrivateChannel ? this.state.privateMessageRef : this.state.messageRef;
         this.setState({ messages: [] });
         const { selectedChannel } = newProps.channel;
         if (selectedChannel.id) {
             let messagesAdded = [];
-            this.state.messageRef.child(selectedChannel.id).on("child_added", messageNode => {
+            messageRef.child(selectedChannel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
                 this.setState({ messages: messagesAdded });
             });
@@ -111,16 +116,17 @@ class Messages extends Component {
 
     render() {
         const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
-        const { selectedChannel } = this.props.channel;
+        const { channel } = this.props;
         return (
             //Cannot use because of callback from firebase call a lot of times
             // this.state.isLoadingChannel ? <InvertedSpinner /> : 
             <React.Fragment>
                 <MessageHeader
-                    channelName={selectedChannel.name}
+                    channelName={channel.selectedChannel.name}
                     channelUsers={this.getChannelUsers(messages)}
                     handleSearchMessageChange={this.handleSearchMessageChange}
                     searchMessageLoading={searchMessageLoading}
+                    isPrivateChannel={channel.isPrivateChannel}
                 />
 
                 <Segment>
@@ -136,10 +142,11 @@ class Messages extends Component {
                 </Segment>
 
                 <MessageForm
-                    messageRef={this.state.messageRef}
+                    messageRef={this.getMessageRef()}
                     user={this.props.user}
-                    channel={this.props.channel.selectedChannel}
+                    channel={channel.selectedChannel}
                     setProgressBar={this.setProgressBar}
+                    isPrivateChannel={channel.isPrivateChannel}
                 />
             </React.Fragment>
         );
