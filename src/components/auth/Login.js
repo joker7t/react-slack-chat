@@ -75,9 +75,10 @@ class Login extends Component {
                 .auth()
                 .signInWithEmailAndPassword(this.state.email, this.state.password)
                 .then(signedInUser => {
-                    console.log(signedInUser);
-                    this.setState({ isLoading: false });
                     this.props.signIn(signedInUser);
+                    this.setState({ isLoading: false });
+                    this.props.history.push(HOME_PATH);
+
                 })
                 .catch(e => {
                     console.log(e);
@@ -104,12 +105,6 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        if (!_.isEmpty(this.props.user.user)) {
-            this.props.history.push(HOME_PATH);
-        }
-    }
-
-    componentDidUpdate() {
         if (!_.isEmpty(this.props.user.user)) {
             this.props.history.push(HOME_PATH);
         }

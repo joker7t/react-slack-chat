@@ -58,7 +58,7 @@ class UserPanel extends Component {
                         </Header>
                     </Grid.Row>
                 </Grid.Column>
-            </Grid >
+            </Grid>
         );
     }
 }

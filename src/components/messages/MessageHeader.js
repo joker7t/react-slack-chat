@@ -2,15 +2,20 @@ import React, { Component } from 'react';
 import { Header, Input, Segment, Icon } from "semantic-ui-react";
 
 class MessageHeader extends Component {
+
+    getChannelName = (isPrivateChannel) => isPrivateChannel ? '@' : '#'
+
+
     render() {
-        const { channelName, channelUsers, handleSearchMessageChange, searchMessageLoading } = this.props;
+        const { channelName, channelUsers, handleSearchMessageChange, searchMessageLoading, isPrivateChannel } = this.props;
+
         return (
             <Segment clearing className="message_header">
                 {/* Channel title */}
                 <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
                     <span>
-                        {`${channelName} `}
-                        <Icon name="star outline" color="black" />
+                        {`${this.getChannelName(isPrivateChannel)}${channelName} `}
+                        {isPrivateChannel ? null : <Icon name="star outline" color="black" />}
                     </span>
                     <Header.Subheader>{channelUsers}</Header.Subheader>
                 </Header>
