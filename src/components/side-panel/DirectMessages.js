@@ -33,9 +33,7 @@ class DirectMessages extends Component {
             if (snap.val() === true) {
                 const ref = this.state.presenceRef.child(userId);
                 ref.set(true);
-                ref.onDisconnect().remove(err => {
-                    console.error(err);
-                });
+                ref.onDisconnect().remove(err => err && console.log(err));
             }
         });
 
