@@ -8,6 +8,16 @@ html, body, .app {
     background: #eee;
 }
 
+/* side pannel */
+.side-pannel{
+    background: #4c3c4c !important;
+    font-size: 1.2rem !important;
+}
+
+.menu{
+    padding-bottom: 2em;
+}
+
 .max-width-grid-column{
     max-width: 450px;
 }
