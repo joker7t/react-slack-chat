@@ -29,7 +29,7 @@ class Landing extends Component {
 
                 <SidePanel />
 
-                <Grid.Column style={{ marginLeft: 320 }}>
+                <Grid.Column style={{ marginLeft: 350 }}>
                     <Messages />
                 </Grid.Column>
 

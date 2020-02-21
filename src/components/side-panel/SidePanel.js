@@ -10,7 +10,7 @@ class SidePanel extends Component {
         return (
             <Menu
                 className="side-pannel"
-                size="large"
+                style={{ width: 280 }}
                 inverted
                 fixed="left"
                 vertical
