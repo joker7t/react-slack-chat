@@ -172,7 +172,7 @@ class Messages extends Component {
             });
         }
 
-        this.addUserStarListener(user.uid);
+        this.addUserStarListener(user.uid ? user.uid : user.user.uid);
     }
 
     componentWillReceiveProps(newProps) {
