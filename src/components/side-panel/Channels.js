@@ -53,7 +53,7 @@ class Channels extends Component {
             id: key,
             name: channelName,
             details: channelDetails,
-            createBy: {
+            createdBy: {
                 name: displayName,
                 avatar: photoURL
             }
@@ -109,8 +109,6 @@ class Channels extends Component {
             if (notification.id === channel.id) {
                 count = notification.count;
             }
-            console.log(count)
-
         })
         if (count > 0) return count;
     }
@@ -124,11 +122,9 @@ class Channels extends Component {
         let index = this.state.notifications
             .findIndex(notification => notification.id === channel.id);
         if (index !== -1) {
-
             let updateNotification = [...this.state.notifications];
             updateNotification[index].lastTotal = this.state.notifications[index].lastKnownTotal;
             updateNotification[index].count = 0;
-            console.log(updateNotification[index]);
             this.setState({ notifications: updateNotification });
         }
     }
@@ -183,7 +179,6 @@ class Channels extends Component {
             this.setState({ channels: channelsAdded });
             this.setDefaultChannel();
             this.addNotificationListener(channelNode.key);
-
             //should be check, but not work with callback
             this.props.setIsLoadingChannel(false);
         });

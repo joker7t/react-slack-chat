@@ -13,13 +13,15 @@ class Messages extends Component {
         this.state = {
             //Cannot use because of callback from firebase call a lot of times
             // isLoadingChannel: true,
+            userRef: firebase.database().ref('users'),
             messageRef: firebase.database().ref('messages'),
             privateMessageRef: firebase.database().ref('privateMessages'),
             messages: [],
             progressBar: false,
             searchMessage: '',
             searchMessageLoading: false,
-            searchResult: []
+            searchResult: [],
+            starredChannels: []
         };
     }
 
@@ -86,19 +88,65 @@ class Messages extends Component {
         setTimeout(() => this.setState({ searchMessageLoading: false }), 500);
     }
 
+    handleStar = () => {
+        this.setState(prevState => ({
+            isChannelStarred: !prevState.isChannelStarred
+        }), () => this.starChannel())
+    }
+
+    isChannelStarred = (channelId) => this.state.starredChannels.includes(channelId);
+
+    starChannel = () => {
+        const { user, channel } = this.props;
+        if (!this.isChannelStarred(channel.selectedChannel.id)) {
+            this.state.userRef.child(`${user.uid}/starred`).update({
+                [channel.selectedChannel.id]: {
+                    name: channel.selectedChannel.name,
+                    details: channel.selectedChannel.details,
+                    createdBy: {
+                        name: channel.selectedChannel.createdBy.name,
+                        avatar: channel.selectedChannel.createdBy.avatar
+                    }
+                }
+            })
+            this.setState({ starredChannels: [...this.state.starredChannels, channel.selectedChannel.id] });
+        } else {
+            this.state.userRef.child(`${user.uid}/starred`)
+                .child(channel.selectedChannel.id)
+                .remove(err => err && console.log(err));
+            this.setState({
+                starredChannels: this.state.starredChannels.filter(node => node !== channel.selectedChannel.id)
+            });
+        }
+    }
+
+    addUserStarListener = (channelId, userId) => {
+        this.state.userRef
+            .child(userId)
+            .child('starred')
+            .once('value')
+            .then(data => {
+                if (data.val() !== null) {
+                    const channelIds = Object.keys(data.val());
+                    this.setState({ starredChannels: channelIds });
+                }
+            })
+    }
+
     componentDidMount() {
-        const { channel } = this.props;
+        const { channel, user } = this.props;
         // Cannot use because of callback from firebase call a lot of times
         // if (this.props.channels) {
         //     this.setState({ isLoadingChannel: isLoadingChannel });
         // }
-        if (channel.id) {
+        if (channel.selectedChannel.id) {
             let messagesAdded = [];
-            this.getMessageRef().child(channel.id).on("child_added", messageNode => {
+            this.getMessageRef().child(channel.selectedChannel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
                 this.setState({ messages: messagesAdded });
             });
         }
+        this.addUserStarListener(channel.selectedChannel.id, user.uid);
     }
 
     componentWillReceiveProps(newProps) {
@@ -112,6 +160,7 @@ class Messages extends Component {
                 this.setState({ messages: messagesAdded });
             });
         }
+
     }
 
     render() {
@@ -127,6 +176,8 @@ class Messages extends Component {
                     handleSearchMessageChange={this.handleSearchMessageChange}
                     searchMessageLoading={searchMessageLoading}
                     isPrivateChannel={channel.isPrivateChannel}
+                    isChannelStarred={this.isChannelStarred(channel.selectedChannel.id)}
+                    handleStar={this.handleStar}
                 />
 
                 <Segment>

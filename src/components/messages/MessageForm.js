@@ -55,14 +55,12 @@ class MessageForm extends Component {
         } else {
             messageObj['content'] = message;
         }
-        console.log(messageObj);
         return messageObj;
     }
 
     sendMessage = async (e) => {
         e.preventDefault();
         const { channel, messageRef } = this.props;
-        console.log(messageRef)
         const { message } = this.state;
 
         if (message) {

@@ -7,7 +7,8 @@ class MessageHeader extends Component {
 
 
     render() {
-        const { channelName, channelUsers, handleSearchMessageChange, searchMessageLoading, isPrivateChannel } = this.props;
+        const { channelName, channelUsers, handleSearchMessageChange,
+            searchMessageLoading, isPrivateChannel, handleStar, isChannelStarred } = this.props;
 
         return (
             <Segment clearing className="message_header">
@@ -15,7 +16,13 @@ class MessageHeader extends Component {
                 <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
                     <span>
                         {`${this.getChannelName(isPrivateChannel)}${channelName} `}
-                        {isPrivateChannel ? null : <Icon name="star outline" color="black" />}
+                        {isPrivateChannel ?
+                            null :
+                            <Icon
+                                name={isChannelStarred ? "star" : "star outline"}
+                                color={isChannelStarred ? "yellow" : "black"}
+                                onClick={handleStar}
+                            />}
                     </span>
                     <Header.Subheader>{channelUsers}</Header.Subheader>
                 </Header>
