@@ -6,6 +6,7 @@ import MessageHeader from './MessageHeader';
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { setStarredChannel } from "../../actions/channelAction";
 
 class Messages extends Component {
     constructor() {
@@ -94,33 +95,46 @@ class Messages extends Component {
         }), () => this.starChannel())
     }
 
-    isChannelStarred = (channelId) => this.state.starredChannels.includes(channelId);
+    isChannelStarred = (channelId) => this.state.starredChannels.
+        map(starredChannel => starredChannel.id).includes(channelId);
 
     starChannel = () => {
         const { user, channel } = this.props;
         if (!this.isChannelStarred(channel.selectedChannel.id)) {
-            this.state.userRef.child(`${user.uid}/starred`).update({
-                [channel.selectedChannel.id]: {
-                    name: channel.selectedChannel.name,
-                    details: channel.selectedChannel.details,
-                    createdBy: {
-                        name: channel.selectedChannel.createdBy.name,
-                        avatar: channel.selectedChannel.createdBy.avatar
-                    }
+            const channelVal = {
+                name: channel.selectedChannel.name,
+                details: channel.selectedChannel.details,
+                createdBy: {
+                    name: channel.selectedChannel.createdBy.name,
+                    avatar: channel.selectedChannel.createdBy.avatar
                 }
+
+            }
+            this.state.userRef.child(`${user.uid}/starred`).update({
+                [channel.selectedChannel.id]: channelVal
             })
-            this.setState({ starredChannels: [...this.state.starredChannels, channel.selectedChannel.id] });
+
+            //custome the same for channel in redux
+            channelVal['id'] = channel.selectedChannel.id;
+            this.setState({
+                starredChannels: [...this.state.starredChannels, channelVal]
+            }, () => {
+                this.props.setStarredChannel(this.state.starredChannels);
+            }
+            );
         } else {
             this.state.userRef.child(`${user.uid}/starred`)
                 .child(channel.selectedChannel.id)
                 .remove(err => err && console.log(err));
             this.setState({
-                starredChannels: this.state.starredChannels.filter(node => node !== channel.selectedChannel.id)
+                starredChannels: this.state.starredChannels.filter(node => node.id !== channel.selectedChannel.id)
+            }, () => {
+                this.props.setStarredChannel(this.state.starredChannels);
             });
         }
     }
 
-    addUserStarListener = (channelId, userId) => {
+    addUserStarListener = (userId) => {
         this.state.userRef
             .child(userId)
             .child('starred')
@@ -128,7 +142,16 @@ class Messages extends Component {
             .then(data => {
                 if (data.val() !== null) {
                     const channelIds = Object.keys(data.val());
-                    this.setState({ starredChannels: channelIds });
+                    this.setState({
+                        starredChannels:
+                            channelIds.map(channelId => {
+                                const starredChannel = data.val()[channelId];
+                                starredChannel['id'] = channelId;
+                                return starredChannel
+                            })
+                    }, () => {
+                        this.props.setStarredChannel(this.state.starredChannels);
+                    });
                 }
             })
     }
@@ -139,6 +162,8 @@ class Messages extends Component {
         // if (this.props.channels) {
         //     this.setState({ isLoadingChannel: isLoadingChannel });
         // }
+
+        //not work because channel cannot load on time
         if (channel.selectedChannel.id) {
             let messagesAdded = [];
             this.getMessageRef().child(channel.selectedChannel.id).on("child_added", messageNode => {
@@ -146,7 +171,8 @@ class Messages extends Component {
                 this.setState({ messages: messagesAdded });
             });
         }
-        this.addUserStarListener(channel.selectedChannel.id, user.uid);
+
+        this.addUserStarListener(user.uid ? user.uid : user.user.uid);
     }
 
     componentWillReceiveProps(newProps) {
@@ -164,7 +190,7 @@ class Messages extends Component {
     }
 
     render() {
-        const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading, starredChannels } = this.state;
         const { channel } = this.props;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -207,6 +233,7 @@ class Messages extends Component {
 Messages.propTypes = {
     user: PropTypes.object.isRequired,
     channel: PropTypes.object.isRequired,
+    setStarredChannel: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -214,4 +241,4 @@ const mapStateToProps = (state) => ({
     channel: state.channel,
 })
 
-export default connect(mapStateToProps, null)(Messages);
+export default connect(mapStateToProps, { setStarredChannel })(Messages);
