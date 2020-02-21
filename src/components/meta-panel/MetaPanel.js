@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Accordion, Header, Icon } from "semantic-ui-react";
+import { Segment, Accordion, Header, Icon, Image } from "semantic-ui-react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -19,21 +19,16 @@ class MetaPanel extends Component {
         this.setState({ activeIndex: newIndex });
     }
 
-    componentDidMount() {
-        console.log(this.props.user);
-        console.log(this.props.channel);
-    }
-
-    componentDidUpdate() {
-        console.log(this.props.user);
-        console.log(this.props.channel);
-    }
-
-
+    displayCreator = (createdBy) => !createdBy ? null :
+        <Header as='h3'>
+            <Image circular src={createdBy.avatar} />
+            {createdBy.name}
+        </Header>;
 
     render() {
         const { activeIndex } = this.state;
-        const { user, channel } = this.props;
+        const { channel } = this.props;
+
         return channel.isPrivateChannel ? null : (
             <Segment>
                 <Header as='h3' attached='top'>
@@ -50,7 +45,7 @@ class MetaPanel extends Component {
                         Channel Details
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 0}>
-                        details
+                        {channel.selectedChannel.details}
                     </Accordion.Content>
                 </Accordion>
 
@@ -77,10 +72,10 @@ class MetaPanel extends Component {
                     >
                         <Icon name='dropdown' />
                         <Icon name='pencil alternate' />
-                        Created by {user.displayName}
+                        Created by
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 2}>
-                        creator
+                        {this.displayCreator(channel.selectedChannel.createdBy)}
                     </Accordion.Content>
                 </Accordion>
 
@@ -90,13 +85,11 @@ class MetaPanel extends Component {
 }
 
 MetaPanel.propTypes = {
-    user: PropTypes.object.isRequired,
     channel: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    user: state.user.user,
-    channel: state.channel,
+    channel: state.channel
 })
 
 export default connect(mapStateToProps, null)(MetaPanel);
