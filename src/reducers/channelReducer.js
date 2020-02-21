@@ -1,6 +1,7 @@
-import { SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL, SET_PRIVATE_CHANNEL } from "./type";
+import { SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL, SET_PRIVATE_CHANNEL, SET_STARRED_CHANNEL } from "./type";
 
 const initialState = {
+    starredChannels: [],
     selectedChannel: {},
     isPrivateChannel: false,
     isLoadingChannel: true
@@ -23,6 +24,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 isLoadingChannel: action.payload
+            };
+        case SET_STARRED_CHANNEL:
+            return {
+                ...state,
+                starredChannels: action.payload
             };
         default:
             return state;

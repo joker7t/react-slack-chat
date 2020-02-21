@@ -5,14 +5,6 @@ import { connect } from "react-redux";
 import { setCurrentChannel } from "../../actions/channelAction";
 
 class Starred extends Component {
-    constructor() {
-        super();
-
-        this.state = {
-            starredChannel: [],
-            activeChannel: ''
-        }
-    }
 
     onCLickForChannel = (channel) => {
         this.props.setCurrentChannel(channel);
@@ -35,7 +27,7 @@ class Starred extends Component {
     }
 
     render() {
-        const { starredChannel } = this.state;
+        const { starredChannels } = this.props.channel;
 
         return (
             <Menu.Menu style={{ paddingBottom: "2rem" }}>
@@ -44,10 +36,10 @@ class Starred extends Component {
                         <Icon name="star" /> STARRED
                         </span>
                     {" "}
-                    ({starredChannel.length})
+                    ({starredChannels.length})
                 </Menu.Item>
 
-                {this.displayChannels(starredChannel)}
+                {this.displayChannels(starredChannels)}
             </Menu.Menu>
         );
     }
