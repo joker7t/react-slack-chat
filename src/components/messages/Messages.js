@@ -6,7 +6,8 @@ import MessageHeader from './MessageHeader';
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { setStarredChannel, setTopPosters } from "../../actions/channelAction";
+import { setStarredChannel } from "../../actions/channelAction";
+import { setTopPosters } from "../../actions/topPostAction";
 
 class Messages extends Component {
     constructor() {
@@ -171,8 +172,7 @@ class Messages extends Component {
             }
             return acc;
         }, {});
-        //cannot work because it update state of all components related
-        // this.props.setTopPosters(userPosts);
+        this.props.setTopPosters(userPosts);
     }
 
     componentDidMount() {

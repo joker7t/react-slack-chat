@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Accordion, Header, Icon, Image } from "semantic-ui-react";
+import { Segment, Accordion, Header, Icon, Image, List } from "semantic-ui-react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -25,9 +25,25 @@ class MetaPanel extends Component {
             {createdBy.name}
         </Header>;
 
+    displayPost = (count) => count === 0 || count > 1 ? 'posts' : 'post';
+
+    displayTopPosts = (topPost) => {
+        Object.entries(topPost)
+            .sort((a, b) => b[1] - a[1])
+            .map(([key, val], i) =>
+                <List.Item key={i}>
+                    <Image avatar src={val.avatar} />
+                    <List.Content>
+                        <List.Header as='a'>{key}</List.Header>
+                        <List.Description>{val.count} {this.displayPost(val.count)}</List.Description>
+                    </List.Content>
+                </List.Item>
+            ).slice(0, 5);
+    }
+
     render() {
         const { activeIndex } = this.state;
-        const { channel } = this.props;
+        const { channel, topPost } = this.props;
 
         return channel.isPrivateChannel ? null : (
             <Segment>
@@ -60,7 +76,7 @@ class MetaPanel extends Component {
                         Top Posters
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 1}>
-                        posters
+                        {this.displayTopPosts(topPost)}
                     </Accordion.Content>
                 </Accordion>
 
@@ -75,7 +91,9 @@ class MetaPanel extends Component {
                         Created by
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 2}>
-                        {this.displayCreator(channel.selectedChannel.createdBy)}
+                        <List>
+                            {this.displayCreator(channel.selectedChannel.createdBy)}
+                        </List>
                     </Accordion.Content>
                 </Accordion>
 
@@ -85,11 +103,13 @@ class MetaPanel extends Component {
 }
 
 MetaPanel.propTypes = {
-    channel: PropTypes.object.isRequired
+    channel: PropTypes.object.isRequired,
+    topPost: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    channel: state.channel
+    channel: state.channel,
+    topPost: state.topPost
 })
 
 export default connect(mapStateToProps, null)(MetaPanel);
