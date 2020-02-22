@@ -8,4 +8,5 @@ export const SET_PRIVATE_CHANNEL = "SET_PRIVATE_CHANNEL";
 export const IS_LOADING_CHANNEL = "IS_LOADING_CHANNEL";
 export const SET_STARRED_CHANNEL = "SET_STARRED_CHANNEL";
 
-// Message
+// Top posts
+export const SET_TOP_POSTER = "SET_TOP_POSTER";

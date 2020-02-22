@@ -3,6 +3,7 @@ import { SET_CURRENT_CHANNEL, IS_LOADING_CHANNEL, SET_PRIVATE_CHANNEL, SET_STARR
 const initialState = {
     starredChannels: [],
     selectedChannel: {},
+    topPosters: [],
     isPrivateChannel: false,
     isLoadingChannel: true
 };

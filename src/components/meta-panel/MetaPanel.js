@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Accordion, Header, Icon } from "semantic-ui-react";
+import { Segment, Accordion, Header, Icon, Image, List } from "semantic-ui-react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -13,27 +13,43 @@ class MetaPanel extends Component {
     }
 
     setActiveIndex = (e, titleProps) => {
+        e.preventDefault();
         const { index } = titleProps;
         const { activeIndex } = this.state;
         const newIndex = activeIndex === index ? -1 : index;
         this.setState({ activeIndex: newIndex });
     }
 
-    componentDidMount() {
-        console.log(this.props.user);
-        console.log(this.props.channel);
-    }
+    displayCreator = (createdBy) => !createdBy ? null :
+        <Header as='h3'>
+            <Image circular src={createdBy.avatar} />
+            {createdBy.name}
+        </Header>;
 
-    componentDidUpdate() {
-        console.log(this.props.user);
-        console.log(this.props.channel);
-    }
+    displayPost = (count) => count === 0 || count > 1 ? 'posts' : 'post';
 
+    displayTopPosts = (topPosters) =>
+        Object.entries(topPosters)
+            .sort((a, b) => b[1].count - a[1].count)
+            .map(([key, val], i) =>
+                //style image to fix list cannot show right position in view
+                <List.Item key={i} style={{ clear: 'both' }}>
+                    <Image avatar src={val.avatar} style={{
+                        float: 'left',
+                        margin: '0.5rem 1rem 1.5rem'
+                    }} />
+                    <List.Content>
+                        <List.Header as='a'>{key}</List.Header>
+                        <List.Description>{val.count} {this.displayPost(val.count)}</List.Description>
+                    </List.Content>
+                </List.Item>
+            ).slice(0, 5);
 
 
     render() {
         const { activeIndex } = this.state;
-        const { user, channel } = this.props;
+        const { channel, topPost } = this.props;
+
         return channel.isPrivateChannel ? null : (
             <Segment>
                 <Header as='h3' attached='top'>
@@ -50,7 +66,7 @@ class MetaPanel extends Component {
                         Channel Details
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 0}>
-                        details
+                        {channel.selectedChannel.details}
                     </Accordion.Content>
                 </Accordion>
 
@@ -65,7 +81,7 @@ class MetaPanel extends Component {
                         Top Posters
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 1}>
-                        posters
+                        {this.displayTopPosts(topPost.topPosters)}
                     </Accordion.Content>
                 </Accordion>
 
@@ -77,10 +93,12 @@ class MetaPanel extends Component {
                     >
                         <Icon name='dropdown' />
                         <Icon name='pencil alternate' />
-                        Created by {user.displayName}
+                        Created by
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 2}>
-                        creator
+                        <List>
+                            {this.displayCreator(channel.selectedChannel.createdBy)}
+                        </List>
                     </Accordion.Content>
                 </Accordion>
 
@@ -90,13 +108,13 @@ class MetaPanel extends Component {
 }
 
 MetaPanel.propTypes = {
-    user: PropTypes.object.isRequired,
-    channel: PropTypes.object.isRequired
+    channel: PropTypes.object.isRequired,
+    topPost: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    user: state.user.user,
     channel: state.channel,
+    topPost: state.topPost
 })
 
 export default connect(mapStateToProps, null)(MetaPanel);
