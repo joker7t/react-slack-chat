@@ -13,6 +13,7 @@ class MetaPanel extends Component {
     }
 
     setActiveIndex = (e, titleProps) => {
+        e.preventDefault();
         const { index } = titleProps;
         const { activeIndex } = this.state;
         const newIndex = activeIndex === index ? -1 : index;
@@ -27,19 +28,23 @@ class MetaPanel extends Component {
 
     displayPost = (count) => count === 0 || count > 1 ? 'posts' : 'post';
 
-    displayTopPosts = (topPost) => {
-        Object.entries(topPost)
-            .sort((a, b) => b[1] - a[1])
+    displayTopPosts = (topPosters) =>
+        Object.entries(topPosters)
+            .sort((a, b) => b[1].count - a[1].count)
             .map(([key, val], i) =>
-                <List.Item key={i}>
-                    <Image avatar src={val.avatar} />
+                //style image to fix list cannot show right position in view
+                <List.Item key={i} style={{ clear: 'both' }}>
+                    <Image avatar src={val.avatar} style={{
+                        float: 'left',
+                        margin: '0.5rem 1rem 1.5rem'
+                    }} />
                     <List.Content>
                         <List.Header as='a'>{key}</List.Header>
                         <List.Description>{val.count} {this.displayPost(val.count)}</List.Description>
                     </List.Content>
                 </List.Item>
             ).slice(0, 5);
-    }
+
 
     render() {
         const { activeIndex } = this.state;
@@ -76,7 +81,7 @@ class MetaPanel extends Component {
                         Top Posters
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 1}>
-                        {this.displayTopPosts(topPost)}
+                        {this.displayTopPosts(topPost.topPosters)}
                     </Accordion.Content>
                 </Accordion>
 

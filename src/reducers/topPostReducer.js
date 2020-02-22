@@ -1,7 +1,7 @@
 import { SET_TOP_POSTER } from "./type";
 
 const initialState = {
-    topPosters: []
+    topPosters: {}
 };
 
 export default function (state = initialState, action) {
