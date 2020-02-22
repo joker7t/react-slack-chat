@@ -6,7 +6,7 @@ import MessageHeader from './MessageHeader';
 import firebase from "../../firebase";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { setStarredChannel } from "../../actions/channelAction";
+import { setStarredChannel, setTopPosters } from "../../actions/channelAction";
 
 class Messages extends Component {
     constructor() {
@@ -95,8 +95,8 @@ class Messages extends Component {
         }), () => this.starChannel())
     }
 
-    isChannelStarred = (channelId) => this.state.starredChannels.
-        map(starredChannel => starredChannel.id).includes(channelId);
+    isChannelStarred = (channelId) => this.state.starredChannels
+        .map(starredChannel => starredChannel.id).includes(channelId);
 
     starChannel = () => {
         const { user, channel } = this.props;
@@ -114,7 +114,7 @@ class Messages extends Component {
                 [channel.selectedChannel.id]: channelVal
             })
 
-            //custome the same for channel in redux
+            //custom the same for channel in redux
             channelVal['id'] = channel.selectedChannel.id;
             this.setState({
                 starredChannels: [...this.state.starredChannels, channelVal]
@@ -156,6 +156,25 @@ class Messages extends Component {
             })
     }
 
+    // isTopPostersHasMessage = (topPosters, messageKey) => topPoster.messages.includes(messageKey);
+
+
+    setTopPostersListener = (messages) => {
+        let userPosts = messages.reduce((acc, message) => {
+            if (message.user.name in acc) {
+                acc[message.user.name].count += 1;
+            } else {
+                acc[message.user.name] = {
+                    count: 1,
+                    avatar: message.user.avatar
+                }
+            }
+            return acc;
+        }, {});
+        //cannot work because it update state of all components related
+        // this.props.setTopPosters(userPosts);
+    }
+
     componentDidMount() {
         const { channel, user } = this.props;
         // Cannot use because of callback from firebase call a lot of times
@@ -169,6 +188,7 @@ class Messages extends Component {
             this.getMessageRef().child(channel.selectedChannel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
                 this.setState({ messages: messagesAdded });
+                this.setTopPostersListener(messagesAdded);
             });
         }
 
@@ -184,13 +204,14 @@ class Messages extends Component {
             messageRef.child(selectedChannel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
                 this.setState({ messages: messagesAdded });
+                this.setTopPostersListener(messagesAdded);
             });
         }
 
     }
 
     render() {
-        const { messages, searchResult, searchMessage, searchMessageLoading, starredChannels } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
         const { channel } = this.props;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -233,7 +254,8 @@ class Messages extends Component {
 Messages.propTypes = {
     user: PropTypes.object.isRequired,
     channel: PropTypes.object.isRequired,
-    setStarredChannel: PropTypes.func.isRequired
+    setStarredChannel: PropTypes.func.isRequired,
+    setTopPosters: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
@@ -241,4 +263,4 @@ const mapStateToProps = (state) => ({
     channel: state.channel,
 })
 
-export default connect(mapStateToProps, { setStarredChannel })(Messages);
+export default connect(mapStateToProps, { setStarredChannel, setTopPosters })(Messages);
