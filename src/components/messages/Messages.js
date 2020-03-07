@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setStarredChannel } from "../../actions/channelAction";
 import { setTopPosters } from "../../actions/topPostAction";
+import Typing from "./Typing"
 
 class Messages extends Component {
     constructor() {
@@ -18,12 +19,15 @@ class Messages extends Component {
             userRef: firebase.database().ref('users'),
             messageRef: firebase.database().ref('messages'),
             privateMessageRef: firebase.database().ref('privateMessages'),
+            typingRef: firebase.database().ref('typing'),
+            connectedRef: firebase.database().ref('info/connected'),
             messages: [],
             progressBar: false,
             searchMessage: '',
             searchMessageLoading: false,
             searchResult: [],
-            starredChannels: []
+            starredChannels: [],
+            typingUsers: []
         };
     }
 
@@ -192,11 +196,59 @@ class Messages extends Component {
             });
         }
 
-        user && this.addUserStarListener(user.uid ? user.uid : user.user.uid);
+        if (user) {
+            const userId = user.uid ? user.uid : user.user.uid;
+            this.addUserStarListener(userId);
+        }
+    }
+
+    addTypingListener = (channelId, userId) => {
+        const { typingRef } = this.state;
+        let typingUsers = [];
+        typingRef.child(channelId).on('child_added', snap => {
+            if (snap.key) {
+                typingUsers = typingUsers.concat({
+                    id: snap.key,
+                    name: snap.val()
+                })
+                this.setState({ typingUsers });
+            }
+        });
+
+        typingRef.child(channelId).on('child_removed', snap => {
+            const index = typingUsers.findIndex(user => user.id === snap.key);
+            if (index !== -1) {
+                typingUsers = typingUsers.filter(user => user.id !== snap.key);
+                this.setState({ typingUsers });
+            }
+        });
+
+        this.state.connectedRef.on('value', snap => {
+            if (snap.val() === true) {
+                typingRef
+                    .child(channelId)
+                    .child(userId)
+                    .onDisconnect()
+                    .remove(err => {
+                        if (err !== null) {
+                            console.log(err);
+                        }
+                    })
+            }
+        })
+    }
+
+    displayTypingUser = typingUsers => {
+        return typingUsers.map((typingUser, i) => {
+            return <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.2em' }}>
+                <span className="user__typing">{typingUser.name} is typing</span><Typing />
+            </div>
+        })
     }
 
     componentWillReceiveProps(newProps) {
         const messageRef = newProps.channel.isPrivateChannel ? this.state.privateMessageRef : this.state.messageRef;
+        const { user } = newProps;
         this.setState({ messages: [] });
         const { selectedChannel } = newProps.channel;
         if (selectedChannel.id) {
@@ -206,12 +258,14 @@ class Messages extends Component {
                 this.setState({ messages: messagesAdded });
                 this.setTopPostersListener(messagesAdded);
             });
+            const userId = user.uid ? user.uid : user.user.uid;
+            this.addTypingListener(selectedChannel.id, userId);
         }
 
     }
 
     render() {
-        const { messages, searchResult, searchMessage, searchMessageLoading } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading, typingUsers } = this.state;
         const { channel } = this.props;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -235,6 +289,7 @@ class Messages extends Component {
                         {searchMessage === '' ?
                             this.displayMessages(messages) :
                             this.displayMessages(searchResult)}
+                        {this.displayTypingUser(typingUsers)}
                         {this.setDefaultScroll()}
                     </Comment.Group>
                 </Segment>

@@ -20,6 +20,7 @@ class MessageForm extends Component {
             isModalHasError: false,
             //properties for upload file
             storageRef: firebase.storage().ref(),
+            typingRef: firebase.database().ref('typing'),
             uploadTask: null,
             uploadState: '',
             percentageUploaded: 0,
@@ -60,8 +61,8 @@ class MessageForm extends Component {
 
     sendMessage = async (e) => {
         e.preventDefault();
-        const { channel, messageRef } = this.props;
-        const { message } = this.state;
+        const { channel, messageRef, user } = this.props;
+        const { message, typingRef } = this.state;
 
         if (message) {
             this.setState({ isLoading: true });
@@ -70,6 +71,11 @@ class MessageForm extends Component {
                     .child(channel.id)
                     .push()
                     .set(this.createMessage());
+
+                typingRef
+                    .child(channel.id)
+                    .child(user.uid)
+                    .remove();
 
             } catch (error) {
                 this.setState({ isMessageHasError: true });
@@ -148,6 +154,22 @@ class MessageForm extends Component {
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
 
+    handleKeyDown = () => {
+        const { message, typingRef } = this.state;
+        const { channel, user } = this.props;
+        if (message) {
+            typingRef
+                .child(channel.id)
+                .child(user.uid)
+                .set(user.displayName);
+        } else {
+            typingRef
+                .child(channel.id)
+                .child(user.uid)
+                .remove();
+        }
+    }
+
     render() {
         return (
             <Segment className="message_form">
@@ -164,6 +186,7 @@ class MessageForm extends Component {
                         placeholder="Write you message"
                         value={this.state.message}
                         onChange={this.onChange}
+                        onKeyDown={this.handleKeyDown}
                     />
 
                     <Button.Group icon widths="2">
