@@ -1,5 +1,5 @@
 html, body, .app {
-    height: 100vh;
+    height: 100%;
     background: #eee;
     padding: 1em;
 }
@@ -144,4 +144,9 @@ html, body, .app {
     100% {
         opacity: 0;
     }
+}
+
+/* Emoji */
+.emoji-picker{
+    position: absolute !important;    
 }
