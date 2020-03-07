@@ -13,6 +13,7 @@ class Channels extends Component {
         this.state = {
             channelRef: firebase.database().ref('channels'),
             messageRef: firebase.database().ref('messages'),
+            typingRef: firebase.database().ref('typing'),
             channels: [],
             modal: false,
             channelName: '',
@@ -114,8 +115,13 @@ class Channels extends Component {
     }
 
     onCLickForChannel = (channel) => {
+        const { user } = this.props;
         this.props.setCurrentChannel(channel);
         this.clearNotification(channel);
+        this.state.typingRef
+            .child(channel.id)
+            .child(user.uid)
+            .remove();
     }
 
     clearNotification = (channel) => {
