@@ -37,7 +37,7 @@ class UserPanel extends Component {
         ];
 
         return (
-            <Grid style={{ background: "#4c3c4c" }}>
+            <Grid>
                 {
                     // colunm contains row because of parent element in vertical order
                 }

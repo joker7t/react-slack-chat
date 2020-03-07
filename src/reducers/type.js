@@ -10,3 +10,6 @@ export const SET_STARRED_CHANNEL = "SET_STARRED_CHANNEL";
 
 // Top posts
 export const SET_TOP_POSTER = "SET_TOP_POSTER";
+
+// Colors
+export const SET_COLORS = "SET_COLORS";
