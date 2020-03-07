@@ -4,13 +4,8 @@ html, body, .app {
     padding: 1em;
 }
 
-.main-background{
-    background: #eee;
-}
-
 /* side pannel */
 .side-pannel{
-    background: #4c3c4c !important;
     font-size: 1.2rem !important;
     overflow-y: scroll;
 }
@@ -52,7 +47,7 @@ html, body, .app {
     height: 16vh;
     z-index: 200;
     position: fix !important;
-    width: 148%;
+    width: 151%;
 }
 
 .message_self{
@@ -78,4 +73,23 @@ html, body, .app {
     width: 110%;
     margin: 0.3em 1.1em 0 0 !important;
     transform: translateY(1.3em);
+}
+
+/* Color pannel */
+.color__container{
+    position: relative;
+    overflow: hidden;
+    width: 35px;
+    border-radius: 5px;
+}
+
+.color__square{
+    width: 35px;
+    height: 35px;
+}
+
+.color__overlay{
+    width: 85px;
+    height: 35px;
+    transform: rotate(225deg);
 }

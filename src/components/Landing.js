@@ -22,8 +22,10 @@ class Landing extends Component {
     }
 
     render() {
+        const { color } = this.props;
+
         return (
-            <Grid columns="equal" className="app main-background">
+            <Grid columns="equal" className="app" style={{ background: color.secondary }}>
 
                 <ColorPanel />
 
@@ -43,11 +45,13 @@ class Landing extends Component {
 }
 
 Landing.propTypes = {
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    color: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    user: state.user.user
+    user: state.user.user,
+    color: state.color
 });
 
 export default connect(mapStateToProps, null)(Landing);
