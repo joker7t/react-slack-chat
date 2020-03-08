@@ -157,7 +157,11 @@ class MessageForm extends Component {
 
     isDisabledButton = () => _.isEmpty(this.props.channel) || this.state.isLoading;
 
-    handleKeyDown = () => {
+    handleKeyDown = (event) => {
+        // Cannot use with preventDefault
+        // if (event.keyCode === 13) {
+        //     this.sendMessage();
+        // }
         const { message, typingRef } = this.state;
         const { channel, user } = this.props;
         if (message) {
