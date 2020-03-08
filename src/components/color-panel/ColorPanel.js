@@ -82,7 +82,7 @@ class ColorPanel extends Component {
     }
 
     componentWillUnmount() {
-        if (this.props.user.uid) {
+        if (this.props.user) {
             this.state.usersRef.child(`${this.props.user.uid}/colors`).off();
         }
     }
