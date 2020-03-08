@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Button, Input, Form } from "semantic-ui-react";
+import { Segment, Button, Input } from "semantic-ui-react";
 import firebase from "../../firebase";
 import classnames from "classnames";
 import _ from "lodash";
