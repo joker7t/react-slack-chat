@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { setStarredChannel } from "../../actions/channelAction";
 import { setTopPosters } from "../../actions/topPostAction";
 import Typing from "./Typing"
+import Skeleton from "./Skeleton";
 
 class Messages extends Component {
     constructor() {
@@ -27,7 +28,8 @@ class Messages extends Component {
             searchMessageLoading: false,
             searchResult: [],
             starredChannels: [],
-            typingUsers: []
+            typingUsers: [],
+            messagesLoading: true
         };
     }
 
@@ -161,9 +163,6 @@ class Messages extends Component {
             })
     }
 
-    // isTopPostersHasMessage = (topPosters, messageKey) => topPoster.messages.includes(messageKey);
-
-
     setTopPostersListener = (messages) => {
         let userPosts = messages.reduce((acc, message) => {
             if (message.user.name in acc) {
@@ -246,6 +245,14 @@ class Messages extends Component {
         })
     }
 
+    displayMessagesSkeleton = messagesLoading =>
+        messagesLoading ? <React.Fragment>
+            {[...Array(10)].map((_, i) =>
+                <Skeleton key={i} />
+            )}
+        </React.Fragment> : null
+
+
     componentWillReceiveProps(newProps) {
         const messageRef = newProps.channel.isPrivateChannel ? this.state.privateMessageRef : this.state.messageRef;
         const { user } = newProps;
@@ -255,7 +262,7 @@ class Messages extends Component {
             let messagesAdded = [];
             messageRef.child(selectedChannel.id).on("child_added", messageNode => {
                 messagesAdded.push(messageNode.val());
-                this.setState({ messages: messagesAdded });
+                this.setState({ messages: messagesAdded, messagesLoading: false });
                 this.setTopPostersListener(messagesAdded);
             });
             const userId = user.uid ? user.uid : user.user.uid;
@@ -265,7 +272,7 @@ class Messages extends Component {
     }
 
     render() {
-        const { messages, searchResult, searchMessage, searchMessageLoading, typingUsers } = this.state;
+        const { messages, searchResult, searchMessage, searchMessageLoading, typingUsers, messagesLoading } = this.state;
         const { channel } = this.props;
         return (
             //Cannot use because of callback from firebase call a lot of times
@@ -286,6 +293,7 @@ class Messages extends Component {
                         className={this.state.progressBar ? "messages_progress" : "messages"}
                         id="messageContent"
                     >
+                        {this.displayMessagesSkeleton(messagesLoading)}
                         {searchMessage === '' ?
                             this.displayMessages(messages) :
                             this.displayMessages(searchResult)}
