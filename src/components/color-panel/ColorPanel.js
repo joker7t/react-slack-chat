@@ -81,6 +81,10 @@ class ColorPanel extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.state.usersRef.child(`${this.props.user.uid}/colors`).off();
+    }
+
     render() {
         const { modal, primary, secondary, userColors } = this.state;
 

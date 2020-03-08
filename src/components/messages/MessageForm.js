@@ -204,6 +204,10 @@ class MessageForm extends Component {
         });
     };
 
+    componentWillUnmount() {
+
+    }
+
     render() {
         const { emojiPicker } = this.state;
 

@@ -45,6 +45,7 @@ class UserPanel extends Component {
         if (file) {
             reader.readAsDataURL(file);
             reader.addEventListener('load', () => {
+                console.log(reader.result);
                 this.setState({ previewImage: reader.result });
             });
         }
