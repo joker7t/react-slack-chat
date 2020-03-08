@@ -63,7 +63,6 @@ class MessageForm extends Component {
     }
 
     sendMessage = async (e) => {
-        e.preventDefault();
         const { channel, messageRef, user } = this.props;
         const { message, typingRef } = this.state;
 
@@ -159,9 +158,9 @@ class MessageForm extends Component {
 
     handleKeyDown = (event) => {
         // Cannot use with preventDefault
-        // if (event.keyCode === 13) {
-        //     this.sendMessage();
-        // }
+        if (event.keyCode === 13) {
+            this.sendMessage();
+        }
         const { message, typingRef } = this.state;
         const { channel, user } = this.props;
         if (message) {
@@ -178,7 +177,6 @@ class MessageForm extends Component {
     }
 
     handleTogglePicker = (e) => {
-        e.preventDefault();
         this.setState({ emojiPicker: !this.state.emojiPicker });
     }
 
@@ -224,49 +222,47 @@ class MessageForm extends Component {
                     />
                 }
 
-                <Form onSubmit={this.sendMessage}>
-                    <Input
-                        fluid
-                        className={classnames("input-add-channel", {
-                            "error": this.state.isMessageHasError
-                        })}
-                        name="message"
-                        style={{ marginBottom: '0.7em' }}
-                        label={
-                            <Button
-                                icon={emojiPicker ? "close" : "add"}
-                                content={emojiPicker ? "Close" : null}
-                                onClick={this.handleTogglePicker}
-                            />
-                        }
+                <Input
+                    fluid
+                    className={classnames("input-add-channel", {
+                        "error": this.state.isMessageHasError
+                    })}
+                    name="message"
+                    style={{ marginBottom: '0.7em' }}
+                    label={
+                        <Button
+                            icon={emojiPicker ? "close" : "add"}
+                            content={emojiPicker ? "Close" : null}
+                            onClick={this.handleTogglePicker}
+                        />
+                    }
+                    labelPosition="left"
+                    placeholder="Write you message"
+                    value={this.state.message}
+                    onChange={this.onChange}
+                    onKeyDown={this.handleKeyDown}
+                    ref={node => (this.messageInputRef = node)}
+                />
+
+                <Button.Group icon widths="2">
+                    <Button
+                        color="orange"
+                        content="Add Reply"
                         labelPosition="left"
-                        placeholder="Write you message"
-                        value={this.state.message}
-                        onChange={this.onChange}
-                        onKeyDown={this.handleKeyDown}
-                        ref={node => (this.messageInputRef = node)}
+                        icon="edit"
+                        disabled={this.isDisabledButton()}
+                        onClick={this.sendMessage}
                     />
+                    <Button
+                        color="teal"
+                        content="Upload Media"
+                        labelPosition="right"
+                        icon="cloud upload"
+                        disabled={this.isDisabledButton() || this.state.uploadState === 'uploading'}
+                        onClick={this.openModal}
+                    />
+                </Button.Group>
 
-                    <Button.Group icon widths="2">
-                        <Button
-                            color="orange"
-                            content="Add Reply"
-                            labelPosition="left"
-                            icon="edit"
-                            disabled={this.isDisabledButton()}
-                            onClick={this.sendMessage}
-                        />
-                        <Button
-                            color="teal"
-                            content="Upload Media"
-                            labelPosition="right"
-                            icon="cloud upload"
-                            disabled={this.isDisabledButton() || this.state.uploadState === 'uploading'}
-                            onClick={this.openModal}
-                        />
-                    </Button.Group>
-
-                </Form>
                 <ProgressBar
                     uploadState={this.state.uploadState}
                     percentageUploaded={this.state.percentageUploaded}
