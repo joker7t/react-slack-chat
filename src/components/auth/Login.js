@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react';
+import { Row, Col, Alert, Badge, Button, Form } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { REGISTER_PATH, HOME_PATH } from "../../utils/Constant";
 import firebase from "../../firebase";
@@ -98,9 +98,9 @@ class Login extends Component {
     isShownErrorMessage = () => {
         const { errorMessage } = this.state;
         if (!_.isEmpty(errorMessage)) {
-            return <Message error>
+            return <Alert variant='danger'>
                 <p>{errorMessage.message}</p>
-            </Message>;
+            </Alert>;
         }
     }
 
@@ -112,34 +112,43 @@ class Login extends Component {
 
     render() {
         return (
-            <Grid textAlign="center" verticalAlign="middle" className="app">
-                <Grid.Column className="max-width-grid-column">
-                    <Header as="h1" icon color="violet" textAlign="center">
-                        <Icon name="code branch" color="violet" />
-                        Login for chat
-                    </Header>
-                    <Form size="large" onSubmit={this.onSubmit}>
-                        <Segment stacked>
-                            <Form.Input fluid name="email" icon="mail" iconPosition="left" placeholder="email address"
+            <Row textAlign="center" verticalAlign="middle" className="app">
+                <Col className="max-width-grid-column">
+                    <h1>
+                        <Badge style={{ color: "violet", textAlign: "center" }}>
+                            <i class="fa fa-sign-in" aria-hidden="true"></i>
+                            Login for chat
+                        </Badge>
+                    </h1>
+                    <Form onSubmit={this.onSubmit}>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control name="email" placeholder="email address"
                                 className={this.isInputFieldHasError('email')}
                                 onChange={this.onChange} type="text" value={this.state.email} />
-                            <Form.Input fluid name="password" icon="lock" iconPosition="left" placeholder="password"
+                        </Form.Group>
+
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Label>Pass</Form.Label>
+                            <Form.Control name="password" placeholder="password"
                                 className={this.isInputFieldHasError('password')}
                                 onChange={this.onChange} type="password" value={this.state.password} />
+                        </Form.Group>
 
-                            <Button disabled={this.state.isLoading}
-                                className={this.state.isLoading ? "loading" : "ui button"}
-                                color="violet"
-                                fluid
-                                type="submit">Submit</Button>
-                        </Segment>
+                        <Button disabled={this.state.isLoading}
+                            className={this.state.isLoading ? "loading" : "ui button"}
+                            style={{ color: "violet" }}
+                            block
+                            type="submit">
+                            Submit
+                        </Button>
                     </Form>
                     {this.isShownErrorMessage()}
-                    <Message>
+                    <Alert variant='secondary'>
                         <Link to={REGISTER_PATH}>Sign up</Link>
-                    </Message>
-                </Grid.Column>
-            </Grid>
+                    </Alert>
+                </Col>
+            </Row>
         );
     }
 }

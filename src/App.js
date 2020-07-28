@@ -5,7 +5,6 @@ import { HOME_PATH, LOGIN_PATH, REGISTER_PATH } from './utils/Constant';
 import Landing from './components/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import 'semantic-ui-css/semantic.min.css';
 import store from './store';
 import { Provider } from 'react-redux';
 import { SET_USER } from "./reducers/type";
@@ -37,7 +36,7 @@ class App extends Component {
     return this.state.isLoading ? <Spinner /> : (
       <Provider store={store}>
         <Router>
-          <div className="App">
+          <div className="app">
             <Route exact path={HOME_PATH} component={Landing} />
             <Route exact path={LOGIN_PATH} component={Login} />
             <Route exact path={REGISTER_PATH} component={Register} />

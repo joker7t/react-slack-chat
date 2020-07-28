@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Grid } from "semantic-ui-react";
 import ColorPanel from './color-panel/ColorPanel';
 import SidePanel from './side-panel/SidePanel';
 import Messages from './messages/Messages';
@@ -7,6 +6,7 @@ import MetaPanel from './meta-panel/MetaPanel';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import _ from 'lodash';
+import { Row, Col } from 'react-bootstrap';
 
 class Landing extends Component {
     componentDidMount() {
@@ -25,21 +25,21 @@ class Landing extends Component {
         const { color } = this.props;
 
         return (
-            <Grid columns="equal" className="app" style={{ background: color.secondary }}>
+            <Row style={{ background: color.secondary }}>
 
                 <ColorPanel />
 
                 <SidePanel />
 
-                <Grid.Column style={{ marginLeft: 350 }}>
+                <Col style={{ marginLeft: 350 }}>
                     <Messages />
-                </Grid.Column>
+                </Col>
 
-                <Grid.Column width={4}>
+                <Col width={4}>
                     <MetaPanel />
-                </Grid.Column>
+                </Col>
 
-            </Grid>
+            </Row>
         );
     }
 }
