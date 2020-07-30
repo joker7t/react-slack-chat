@@ -25,17 +25,18 @@ class Landing extends Component {
         const { color } = this.props;
 
         return (
-            <Grid columns="equal" className="app" style={{ background: color.secondary }}>
+            <Grid columns="equal" className="landing" style={{ background: color.secondary }}>
 
-                <ColorPanel />
+                <Grid.Column>
+                    <SidePanel />
+                </Grid.Column>
 
-                <SidePanel />
 
-                <Grid.Column style={{ marginLeft: 350 }}>
+                <Grid.Column>
                     <Messages />
                 </Grid.Column>
 
-                <Grid.Column width={4}>
+                <Grid.Column>
                     <MetaPanel />
                 </Grid.Column>
 

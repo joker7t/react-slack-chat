@@ -33,11 +33,29 @@ body {
 }
 
 .app {
-    max-width: 120rem;
+    margin: auto auto;
+    height: 100%;
     @media only screen and (max-width: $bp-largest) {
         max-width: 100%;
         width: 100%;
     }
+}
+
+.landing{
+    height: 100%;
+    max-width: 120rem;
+    margin: auto !important;
+    overflow: hidden;
+    padding: 5px 10px !important;
+    @media only screen and (max-width: $bp-largest) {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+.main{
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* side pannel */

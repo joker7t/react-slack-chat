@@ -37,7 +37,7 @@ class App extends Component {
     return this.state.isLoading ? <Spinner /> : (
       <Provider store={store}>
         <Router>
-          <div className="App">
+          <div className='main'>
             <Route exact path={HOME_PATH} component={Landing} />
             <Route exact path={LOGIN_PATH} component={Login} />
             <Route exact path={REGISTER_PATH} component={Register} />

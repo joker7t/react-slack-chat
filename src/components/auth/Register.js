@@ -140,7 +140,7 @@ class Register extends Component {
 
     render() {
         return (
-            <Grid textAlign="center" verticalAlign="middle" className="app">
+            <Grid textAlign="center" verticalAlign="middle" className="app" style={{ margin: '0' }}>
                 <Grid.Column className="max-width-grid-column">
                     <Header as="h1" icon color="orange" textAlign="center">
                         <Icon name="puzzle piece" color="orange" />

@@ -13,8 +13,8 @@ class Login extends Component {
         super();
 
         this.state = {
-            'email': '',
-            'password': '',
+            'email': 'guest@gmail.com',
+            'password': 'guest1',
             'errorMessage': {},
             'isLoading': false
         };
@@ -112,7 +112,7 @@ class Login extends Component {
 
     render() {
         return (
-            <Grid textAlign="center" verticalAlign="middle" className="app">
+            <Grid textAlign="center" verticalAlign="middle" className="app" style={{ margin: '0px' }}>
                 <Grid.Column className="max-width-grid-column">
                     <Header as="h1" icon color="violet" textAlign="center">
                         <Icon name="code branch" color="violet" />
