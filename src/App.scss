@@ -87,6 +87,18 @@ body {
     }
 }
 
+.app{
+    height: 100%;
+    max-width: 120rem;
+    margin: auto !important;
+    overflow: hidden;
+    background-color: white;
+    @media only screen and (max-width: $bp-largest) {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
 .sub-landing{
     height: 100%;
     overflow: hidden;
