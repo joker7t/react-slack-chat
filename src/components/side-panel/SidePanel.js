@@ -17,10 +17,7 @@ class SidePanel extends Component {
                 fixed="left"
                 vertical
             >
-                <UserPanel />
-                <Starred />
-                <Channels />
-                <DirectMessages />
+
             </Menu>
         );
     }
