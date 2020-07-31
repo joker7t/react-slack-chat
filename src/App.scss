@@ -32,6 +32,9 @@ html {
 .meta-pannel{
     @media (max-width: 768px) {
         display: none;
+        width: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
     }
 }
 
@@ -95,7 +98,7 @@ body {
     max-width: 120rem;
     margin: auto !important;
     overflow: hidden;
-    background-color: white;
+    background-color: #eee;
     @media only screen and (max-width: $bp-largest) {
         max-width: 100%;
         width: 100%;
@@ -112,11 +115,6 @@ body {
         max-width: 100%;
         width: 100%;
     }
-}
-
-.sub-landing{
-    height: 100%;
-    overflow: hidden;
 }
 
 .main{
@@ -150,24 +148,25 @@ body {
 /* messages */
 
 .message_header{
-    height: 11vh;
+    height: 12vh;
 }
 
 .messages{
-    height: 60vh;
+    height: 50vh;
+    width: 100%;
+    max-width: 100% !important;
     overflow-y: scroll;
 }
 
 .messages_progress{
-    height: 56vh;
+    height: 100%;
+    width: 100%;
     overflow-y: scroll;
 }
 
 .message_form{
-    height: 16vh;
+    height: 15vh;
     z-index: 200;
-    position: fix !important;
-    width: 151%;
 }
 
 .message_self{

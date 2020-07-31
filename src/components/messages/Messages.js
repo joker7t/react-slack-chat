@@ -300,13 +300,7 @@ class Messages extends Component {
                     </Comment.Group>
                 </Segment>
 
-                <MessageForm
-                    messageRef={this.getMessageRef()}
-                    user={this.props.user}
-                    channel={channel.selectedChannel}
-                    setProgressBar={this.setProgressBar}
-                    isPrivateChannel={channel.isPrivateChannel}
-                />
+
             </div>
         );
     }

@@ -20,15 +20,17 @@ import UserPanel from './side-panel/UserPanel';
 import Channels from './side-panel/Channels';
 import DirectMessages from './side-panel/DirectMessages';
 import Starred from './side-panel/Starred';
-
-let checkSidebar = true;
+import MessageForm from './messages/MessageForm';
+import firebase from "../firebase";
 
 class Landing extends Component {
     constructor() {
         super();
 
         this.state = {
-            visible: false
+            visible: false,
+            messageRef: firebase.database().ref('messages'),
+            privateMessageRef: firebase.database().ref('privateMessages'),
         };
     }
 
@@ -48,8 +50,13 @@ class Landing extends Component {
         this.state.visible ? this.setState({ visible: false }) : this.setState({ visible: true });
     }
 
+    getMessageRef = () => this.props.channel.isPrivateChannel ? this.state.privateMessageRef : this.state.messageRef;
+
+
+    setProgressBar = (isProgressBar) => this.setState({ progressBar: isProgressBar });
+
     render() {
-        const { color } = this.props;
+        const { channel, user, color } = this.props;
 
         return (
             <div className="landing">
@@ -61,7 +68,7 @@ class Landing extends Component {
                         <i className="sidebar icon sidebar-icon large" onClick={this.toggleSidebar}></i>
                     </Grid.Column>
 
-                    <Grid.Column>
+                    <Grid.Column style={{ paddingTop: '0' }}>
                         <Sidebar.Pushable as={Segment} className='pushable-container'>
                             <Sidebar
                                 as={Menu}
@@ -89,7 +96,7 @@ class Landing extends Component {
                                 </Menu.Item>
                             </Sidebar>
 
-                            <Sidebar.Pusher dimmed={this.state.visible} style={{ height: '100%', minHeight: '0' }}>
+                            <Sidebar.Pusher dimmed={this.state.visible} style={{ height: '100%', minHeight: '0', background: '#eee' }}>
                                 <Segment basic>
                                     <Grid columns="equal" style={{ background: color.secondary }} className='sub-landing'>
 
@@ -97,11 +104,23 @@ class Landing extends Component {
                                             <Messages />
                                         </Grid.Column>
 
-                                        <Grid.Column >
+                                        <Grid.Column className='meta-pannel'>
                                             <MetaPanel />
                                         </Grid.Column>
-
                                     </Grid>
+
+                                    <Grid columns={1} style={{ backgroundColor: '#eee' }}>
+                                        <Grid.Column style={{ paddingTop: '0' }}>
+                                            <MessageForm
+                                                messageRef={this.getMessageRef()}
+                                                user={user}
+                                                channel={channel.selectedChannel}
+                                                setProgressBar={this.setProgressBar}
+                                                isPrivateChannel={channel.isPrivateChannel}
+                                            />
+                                        </Grid.Column>
+                                    </Grid>
+
                                 </Segment>
                             </Sidebar.Pusher>
                         </Sidebar.Pushable>
@@ -120,7 +139,8 @@ Landing.propTypes = {
 
 const mapStateToProps = state => ({
     user: state.user.user,
-    color: state.color
+    color: state.color,
+    channel: state.channel
 });
 
 export default connect(mapStateToProps, null)(Landing);
