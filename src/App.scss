@@ -1,8 +1,8 @@
-$bp-largest: 75em;     // 1200px
-$bp-large: 68.75em;    // 1100px
-$bp-medium: 56.25em;   // 900px
-$bp-small: 37.5em;     // 600px
-$bp-smallest: 31.25em; // 500px
+$bp-largest: 1200px;     // 1200px
+$bp-large: 1100px;    // 1100px
+$bp-medium: 900px;   // 900px
+$bp-small: 600px;     // 600px
+$bp-smallest: 500px; // 500px
 
 .ui.wide.right.sidebar,
 .ui.wide.left.sidebar{
@@ -22,10 +22,25 @@ $bp-smallest: 31.25em; // 500px
 
 html {
     box-sizing: border-box;
-    font-size: 62.5%; // 1rem = 10px, 10px/16px = 62.5%
+    font-size: 16px;
 
-    @media only screen and (max-width: $bp-large) {
-        font-size: 50%;
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+}
+
+.meta-pannel{
+    @media (max-width: 768px) {
+        display: none;
+    }
+}
+
+.message-pannel{
+    width: 45% !important;
+
+    @media (max-width: 768px) {
+        width: 100% !important;
+        display: block !important;
     }
 }
 

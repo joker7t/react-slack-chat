@@ -51,7 +51,7 @@ class MetaPanel extends Component {
         const { channel, topPost } = this.props;
 
         return channel.isPrivateChannel ? null : (
-            <Segment>
+            <Segment className='meta-pannel'>
                 <Header as='h3' attached='top'>
                     About {channel.isPrivateChannel ? "@" : "#"}{channel.selectedChannel.name}
                 </Header>

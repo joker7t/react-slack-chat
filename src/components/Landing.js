@@ -93,11 +93,11 @@ class Landing extends Component {
                                 <Segment basic>
                                     <Grid columns="equal" style={{ background: color.secondary }} className='sub-landing'>
 
-                                        <Grid.Column>
+                                        <Grid.Column className='message-pannel'>
                                             <Messages />
                                         </Grid.Column>
 
-                                        <Grid.Column>
+                                        <Grid.Column >
                                             <MetaPanel />
                                         </Grid.Column>
 

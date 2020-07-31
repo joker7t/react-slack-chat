@@ -275,9 +275,7 @@ class Messages extends Component {
         const { messages, searchResult, searchMessage, searchMessageLoading, typingUsers, messagesLoading } = this.state;
         const { channel } = this.props;
         return (
-            //Cannot use because of callback from firebase call a lot of times
-            // this.state.isLoadingChannel ? <InvertedSpinner /> : 
-            <React.Fragment>
+            <div>
                 <MessageHeader
                     channelName={channel.selectedChannel.name}
                     channelUsers={this.getChannelUsers(messages)}
@@ -309,7 +307,7 @@ class Messages extends Component {
                     setProgressBar={this.setProgressBar}
                     isPrivateChannel={channel.isPrivateChannel}
                 />
-            </React.Fragment>
+            </div>
         );
     }
 }
