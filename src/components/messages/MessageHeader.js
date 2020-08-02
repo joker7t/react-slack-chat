@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Input, Segment, Icon } from "semantic-ui-react";
+import { Input, Segment, Icon } from "semantic-ui-react";
 
 class MessageHeader extends Component {
 

@@ -233,6 +233,7 @@ class MessageForm extends Component {
                                 icon={emojiPicker ? "close" : "add"}
                                 content={emojiPicker ? "Close" : null}
                                 onClick={this.handleTogglePicker}
+                                style={{ width: '80px' }}
                             />
                         }
                         labelPosition="left"

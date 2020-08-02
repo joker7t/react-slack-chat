@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import {
-    Checkbox,
     Grid,
-    Header,
     Icon,
-    Image,
     Menu,
     Segment,
     Sidebar,
 } from 'semantic-ui-react'
-import ColorPanel from './color-panel/ColorPanel';
-import SidePanel from './side-panel/SidePanel';
 import Messages from './messages/Messages';
 import MetaPanel from './meta-panel/MetaPanel';
 import { connect } from "react-redux";
