@@ -137,7 +137,7 @@ class UserPanel extends Component {
 
                         <Header style={{ padding: ".25rem" }} as="h4" inverted>
                             <Dropdown trigger={
-                                <span>
+                                <span className='user-dispaly-name'>
                                     <Image src={user && user.photoURL} spaced="right" avatar />
                                     {user && user.displayName}
                                 </span>}

@@ -221,30 +221,30 @@ class MessageForm extends Component {
                         onSelect={this.handleAddEmoji}
                     />
                 }
+                <div className='message-form-input'>
+                    <Input
+                        fluid
+                        className={classnames("input-add-channel", {
+                            "error": this.state.isMessageHasError
+                        })}
+                        name="message"
+                        label={
+                            <Button
+                                icon={emojiPicker ? "close" : "add"}
+                                content={emojiPicker ? "Close" : null}
+                                onClick={this.handleTogglePicker}
+                            />
+                        }
+                        labelPosition="left"
+                        placeholder="Write you message"
+                        value={this.state.message}
+                        onChange={this.onChange}
+                        onKeyDown={this.handleKeyDown}
+                        ref={node => (this.messageInputRef = node)}
+                    />
+                </div>
 
-                <Input
-                    fluid
-                    className={classnames("input-add-channel", {
-                        "error": this.state.isMessageHasError
-                    })}
-                    name="message"
-                    style={{ marginBottom: '0.7em' }}
-                    label={
-                        <Button
-                            icon={emojiPicker ? "close" : "add"}
-                            content={emojiPicker ? "Close" : null}
-                            onClick={this.handleTogglePicker}
-                        />
-                    }
-                    labelPosition="left"
-                    placeholder="Write you message"
-                    value={this.state.message}
-                    onChange={this.onChange}
-                    onKeyDown={this.handleKeyDown}
-                    ref={node => (this.messageInputRef = node)}
-                />
-
-                <Button.Group icon widths="2">
+                <Button.Group icon widths="2" className='message-form-btn-group'>
                     <Button
                         color="orange"
                         content="Add Reply"

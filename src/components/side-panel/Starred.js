@@ -30,7 +30,7 @@ class Starred extends Component {
         const { starredChannels } = this.props.channel;
 
         return (
-            <Menu.Menu style={{ paddingBottom: "2rem" }}>
+            <Menu.Menu style={{ paddingBottom: "2rem", fontSize: '1rem' }}>
                 <Menu.Item>
                     <span>
                         <Icon name="star" /> STARRED

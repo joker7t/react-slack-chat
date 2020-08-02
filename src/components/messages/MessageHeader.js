@@ -13,8 +13,8 @@ class MessageHeader extends Component {
         return (
             <Segment clearing className="message_header">
                 {/* Channel title */}
-                <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
-                    <span>
+                <div className="message_header-left">
+                    <span className='message_header-left-channel'>
                         {`${this.getChannelName(isPrivateChannel)}${channelName} `}
                         {isPrivateChannel ?
                             null :
@@ -24,11 +24,11 @@ class MessageHeader extends Component {
                                 onClick={handleStar}
                             />}
                     </span>
-                    <Header.Subheader>{channelUsers}</Header.Subheader>
-                </Header>
+                    <div className='message_header-left-user'>{channelUsers}</div>
+                </div>
 
                 {/* Channel search input */}
-                <Header floated="right">
+                <div className="message_header-right">
                     <Input
                         loading={searchMessageLoading}
                         size="mini"
@@ -37,7 +37,7 @@ class MessageHeader extends Component {
                         placeholder="Search messages"
                         onChange={handleSearchMessageChange}
                     />
-                </Header>
+                </div>
             </Segment>
         );
     }

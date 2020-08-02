@@ -203,12 +203,16 @@ class Channels extends Component {
                     <Menu.Item>
                         <span>
                             <Icon name="exchange" /> CHANNELS
+                            {" "}
+                            ({channels.length})
                         </span>
-                        {" "}
-                        ({channels.length}) <Icon name="add" style={{ cursor: "pointer" }} onClick={this.handleOpenModal} />
                     </Menu.Item>
 
                     {this.displayChannels(channels)}
+
+                    <div onClick={this.handleOpenModal} style={{ cursor: "pointer", marginTop: '1rem' }}>
+                        <Icon name="add" /> Add Channel
+                    </div>
                 </Menu.Menu>
 
 
